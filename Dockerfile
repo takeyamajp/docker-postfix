@@ -34,3 +34,4 @@ ENV MESSAGE_SIZE_LIMIT 10485760
 EXPOSE 25
 
 CMD ["postfix", "start"]
+
