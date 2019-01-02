@@ -13,6 +13,8 @@ RUN yum -y install epel-release; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix start'; \
+    echo 'startsecs = 0'; \
+    echo 'autorestart = false'; \
     } > /etc/supervisord.d/postfix.ini; \
     yum clean all;
 
