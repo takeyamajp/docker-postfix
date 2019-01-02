@@ -1,4 +1,4 @@
-# docker-postfix
+# postfix
 [![Docker Stars](https://img.shields.io/docker/stars/takeyamajp/postfix.svg?style=flat-square)](https://hub.docker.com/r/takeyamajp/postfix/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/takeyamajp/postfix.svg?style=flat-square)](https://hub.docker.com/r/takeyamajp/postfix/)
 
