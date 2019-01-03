@@ -3,6 +3,7 @@ MAINTAINER "Hiroki Takeyama"
 
 # postfix
 RUN yum -y install postfix; \
+    sed -i 's/^inet_interfaces = .*$/inet_interfaces = all/1' /etc/postfix/main.cf; \
     yum clean all;
 
 # supervisor
