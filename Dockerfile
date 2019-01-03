@@ -3,7 +3,6 @@ MAINTAINER "Hiroki Takeyama"
 
 # postfix
 RUN yum -y install postfix; \
-    sed -i 's/^inet_interfaces = .*$/inet_interfaces = all/1' /etc/postfix/main.cf; \
     yum clean all;
 
 # supervisor
@@ -29,7 +28,6 @@ RUN { \
     echo 'echo "myhostname = ${HOST_NAME}"'; \
     echo 'echo "mydomain = ${DOMAIN_NAME}"'; \
     echo 'echo "myorigin = \$mydomain"'; \
-    echo 'echo "smtpd_banner = \$myhostname ESMTP unknown"'; \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
     echo 'echo "# END SMTP SETTINGS"'; \
     echo '} >> /etc/postfix/main.cf'; \
