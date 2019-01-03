@@ -15,8 +15,6 @@ RUN yum -y install epel-release; \
     echo 'command=/usr/sbin/postfix start'; \
     echo 'startsecs = 0'; \
     echo 'autorestart = false'; \
-    echo 'stdout_logfile = /var/log/maillog'; \
-    echo 'stdout_logfile_maxbytes = 0'; \
     } > /etc/supervisord.d/postfix.ini; \
     yum clean all;
 
