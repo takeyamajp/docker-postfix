@@ -12,10 +12,16 @@ RUN yum -y install epel-release; \
     sed -i 's/^nodaemon=false/nodaemon=true/1' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
-    echo 'command=/usr/sbin/postfix start'; \
+    echo 'command = postfix.sh'; \
     echo 'startsecs = 0'; \
     echo 'autorestart = false'; \
     } > /etc/supervisord.d/postfix.ini; \
+    { \
+    echo '#!/bin/bash -eu'; \
+    echo 'trap "{ echo Stopping postfix; /usr/sbin/postfix stop; exit 0; }" EXIT'; \
+    echo '/usr/sbin/postfix start'; \
+    echo 'sleep infinity'; \
+    } > /usr/local/bin/postfix.sh; \
     yum clean all;
 
 # entrypoint
