@@ -14,7 +14,6 @@ RUN yum -y install epel-release; \
     echo '[program:postfix]'; \
     echo 'process_name = master'; \
     echo 'command = postfix.sh'; \
-    echo 'autorestart = false'; \
     } > /etc/supervisord.d/postfix.ini; \
     { \
     echo '#!/bin/bash -eu'; \
