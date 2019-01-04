@@ -22,6 +22,7 @@ RUN yum -y install epel-release; \
     echo '/usr/sbin/postfix -c /etc/postfix start'; \
     echo 'sleep infinity'; \
     } > /usr/local/bin/postfix.sh; \
+    chmod +x /usr/local/bin/postfix.sh; \
     yum clean all;
 
 # entrypoint
