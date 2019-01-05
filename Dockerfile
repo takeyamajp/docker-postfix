@@ -8,6 +8,7 @@ RUN yum -y install rsyslog; \
     sed -i 's/^\$OmitLocalLogging on/\$OmitLocalLogging off/1' /etc/rsyslog.conf; \
     sed -i 's/^\$IMJournalStateFile imjournal\.state/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf; \
     ln -sf /dev/stdout /var/log/maillog; \
+    chmod +w /var/log/maillog; \
     yum clean all;
 
 # postfix
