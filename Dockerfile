@@ -20,8 +20,8 @@ RUN yum -y install epel-release; \
     sed -i 's/^nodaemon=false/nodaemon=true/1' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
-    echo 'process_name = master'; \
-    echo 'command = postfix start'; \
+    echo 'process_name=master'; \
+    echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
     } > /etc/supervisord.d/postfix.ini; \
     { \
     echo '[program:rsyslog]'; \
