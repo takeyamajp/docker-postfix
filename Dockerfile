@@ -22,6 +22,7 @@ RUN yum -y install epel-release; \
     echo '[program:postfix]'; \
     echo 'process_name=master'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
+    echo 'startsecs=0'; \
     } > /etc/supervisord.d/postfix.ini; \
     { \
     echo '[program:rsyslog]'; \
