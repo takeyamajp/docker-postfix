@@ -21,7 +21,6 @@ RUN yum -y install epel-release; \
     sed -i 's/^nodaemon=false/nodaemon=true/1' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
-    echo 'process_name=master'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
     echo 'startsecs=0'; \
     } > /etc/supervisord.d/postfix.ini; \
