@@ -14,7 +14,7 @@ RUN yum -y install rsyslog; \
     sed -i 's/^\$OmitLocalLogging on/\$OmitLocalLogging off/1' /etc/rsyslog.conf; \
     sed -i 's/^\$IMJournalStateFile imjournal\.state/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf; \
     rm -f /var/log/maillog; \
-    ln -s /dev/stdout /var/log/maillog; \
+    ln -sf /dev/stdout /var/log/maillog; \
     yum clean all;
 
 # supervisor
