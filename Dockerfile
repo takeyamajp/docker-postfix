@@ -1,19 +1,17 @@
 FROM centos
 MAINTAINER "Hiroki Takeyama"
 
+# postfix
+RUN yum -y install postfix; \
+    sed -i 's/^inet_interfaces = .*/inet_interfaces = all/1' /etc/postfix/main.cf; \
+    yum clean all;
+
 # rsyslog
 RUN yum -y install rsyslog; \
     sed -i 's/^\$SystemLogSocketName .*/\$SystemLogSocketName \/dev\/log/1' /etc/rsyslog.d/listen.conf; \
     sed -i 's/^\$ModLoad imjournal/#\$ModLoad imjournal/1' /etc/rsyslog.conf; \
     sed -i 's/^\$OmitLocalLogging on/\$OmitLocalLogging off/1' /etc/rsyslog.conf; \
     sed -i 's/^\$IMJournalStateFile imjournal\.state/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf; \
-    ln -sf /dev/stdout /var/log/maillog; \
-    chmod +w /var/log/maillog; \
-    yum clean all;
-
-# postfix
-RUN yum -y install postfix; \
-    sed -i 's/^inet_interfaces = .*/inet_interfaces = all/1' /etc/postfix/main.cf; \
     yum clean all;
 
 # supervisor
@@ -30,6 +28,12 @@ RUN yum -y install epel-release; \
     echo '[program:rsyslog]'; \
     echo 'command=/usr/sbin/rsyslogd -n'; \
     } > /etc/supervisord.d/rsyslog.ini; \
+    { \
+    echo '[program:tail]'; \
+    echo 'command=/usr/bin/tail -f /var/log/maillog'; \
+    echo 'stdout_logfile=/dev/fd/1'; \
+    echo 'stdout_logfile_maxbytes=0'; \
+    } > /etc/supervisord.d/tail.ini; \
     yum clean all;
 
 # entrypoint
