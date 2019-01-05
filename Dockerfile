@@ -13,8 +13,6 @@ RUN yum -y install rsyslog; \
     sed -i 's/^\$ModLoad imjournal/#\$ModLoad imjournal/1' /etc/rsyslog.conf; \
     sed -i 's/^\$OmitLocalLogging on/\$OmitLocalLogging off/1' /etc/rsyslog.conf; \
     sed -i 's/^\$IMJournalStateFile imjournal\.state/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf; \
-    rm -f /var/log/maillog; \
-    ln -s /dev/fd/1 /var/log/maillog; \
     yum clean all;
 
 # supervisor
@@ -30,6 +28,12 @@ RUN yum -y install epel-release; \
     echo '[program:rsyslog]'; \
     echo 'command=/usr/sbin/rsyslogd -n'; \
     } > /etc/supervisord.d/rsyslog.ini; \
+    { \
+    echo '[program:tail]'; \
+    echo 'command=/usr/bin/tail -f /var/log/maillog'; \
+    echo 'stdout_logfile=/dev/fd/1'; \
+    echo 'stdout_logfile_maxbytes=0'; \
+    } > /etc/supervisord.d/tail.ini; \
     yum clean all;
 
 # entrypoint
@@ -37,6 +41,8 @@ RUN { \
     echo '#!/bin/bash -eu'; \
     echo 'rm -f /etc/localtime'; \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
+    echo 'rm -f /var/log/maillog'; \
+    echo 'touch /var/log/maillog'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
