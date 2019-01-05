@@ -4,9 +4,9 @@ MAINTAINER "Hiroki Takeyama"
 # rsyslog
 RUN yum -y install rsyslog; \
     sed -i 's/^\$SystemLogSocketName .*$/\$SystemLogSocketName \/dev\/log/1' /etc/rsyslog.d/listen.conf; \
-    sed -i 's/^\$ModLoad imjournal$/#\$ModLoad imjournal/1' /etc/rsyslog.conf
-    sed -i 's/^\$OmitLocalLogging on$/\$OmitLocalLogging off/1' /etc/rsyslog.conf
-    sed -i 's/^\$IMJournalStateFile imjournal\.state$/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf
+    sed -i 's/^\$ModLoad imjournal$/#\$ModLoad imjournal/1' /etc/rsyslog.conf; \
+    sed -i 's/^\$OmitLocalLogging on$/\$OmitLocalLogging off/1' /etc/rsyslog.conf; \
+    sed -i 's/^\$IMJournalStateFile imjournal\.state$/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf; \
     yum clean all;
 
 # postfix
