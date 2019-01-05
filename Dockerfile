@@ -1,6 +1,14 @@
 FROM centos
 MAINTAINER "Hiroki Takeyama"
 
+# rsyslog
+RUN yum -y install rsyslog; \
+    sed -i 's/^\$SystemLogSocketName .*$/\$SystemLogSocketName \/dev\/log/1' /etc/rsyslog.d/listen.conf; \
+    sed -i 's/^\$ModLoad imjournal$/#\$ModLoad imjournal/1' /etc/rsyslog.conf
+    sed -i 's/^\$OmitLocalLogging on$/\$OmitLocalLogging off/1' /etc/rsyslog.conf
+    sed -i 's/^\$IMJournalStateFile imjournal\.state$/#\$IMJournalStateFile imjournal\.state/1' /etc/rsyslog.conf
+    yum clean all;
+
 # postfix
 RUN yum -y install postfix; \
     sed -i 's/^inet_interfaces = .*$/inet_interfaces = all/1' /etc/postfix/main.cf; \
@@ -9,19 +17,22 @@ RUN yum -y install postfix; \
 # supervisor
 RUN yum -y install epel-release; \
     yum -y --enablerepo=epel install supervisor; \
-    sed -i 's/^nodaemon=false/nodaemon=true/1' /etc/supervisord.conf; \
+    sed -i 's/^nodaemon=false$/nodaemon=true/1' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
     echo 'process_name = master'; \
-    echo 'command = postfix.sh'; \
+    echo 'command = postfix start'; \
     } > /etc/supervisord.d/postfix.ini; \
     { \
-    echo '#!/bin/bash -eu'; \
-    echo 'trap "{ /usr/sbin/postfix stop; exit 0; }" EXIT'; \
-    echo '/usr/sbin/postfix -c /etc/postfix start'; \
-    echo 'sleep infinity'; \
-    } > /usr/local/bin/postfix.sh; \
-    chmod +x /usr/local/bin/postfix.sh; \
+    echo '[program:rsyslog]'; \
+    echo 'command=/usr/sbin/rsyslogd -n'; \
+    } > /etc/supervisord.d/rsyslog.ini; \
+    { \
+    echo '[program:tail]'; \
+    echo 'command=/usr/bin/tail -f /var/log/maillog'; \
+    echo 'stdout_logfile=/dev/fd/1'; \
+    echo 'stdout_logfile_maxbytes=0'; \
+    } > /etc/supervisord.d/tail.ini; \
     yum clean all;
 
 # entrypoint
