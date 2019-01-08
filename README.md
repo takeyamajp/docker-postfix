@@ -9,7 +9,7 @@
     
     ENV TIMEZONE Asia/Tokyo
     
-    ENV HOST_NAME mail.example.com  
+    ENV HOST_NAME smtp.example.com  
     ENV DOMAIN example.com  
     ENV MESSAGE_SIZE_LIMIT 10485760
     
