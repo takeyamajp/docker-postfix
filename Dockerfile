@@ -19,6 +19,10 @@ RUN yum -y install rsyslog; \
 RUN yum -y install epel-release; \
     yum -y --enablerepo=epel install supervisor; \
     sed -i 's/^\(nodaemon\)=false/\1=true/1' /etc/supervisord.conf; \
+    sed -i '/^\[unix_http_server\]$/a username=dummy' /etc/supervisord.conf; \
+    sed -i '/^\[unix_http_server\]$/a password=dummy' /etc/supervisord.conf; \
+    sed -i '/^\[supervisorctl\]$/a username=dummy' /etc/supervisord.conf; \
+    sed -i '/^\[supervisorctl\]$/a password=dummy' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
