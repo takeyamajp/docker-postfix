@@ -2,8 +2,14 @@ FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
 # postfix
-RUN yum -y install postfix; \
+RUN yum -y install postfix cyrus-sasl cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
+    { \
+    echo 'smtpd_sasl_auth_enable = yes'; \
+    echo 'smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'; \
+    echo 'smtpd_sasl_security_options = noanonymous, noplaintext'; \
+    } >> /etc/postfix/main.cf; \
+    echo 'sed -i "s/^\(pwcheck_method:\) .*/\1 auxprop/1" /etc/sasl2/smtpd.conf'; \
     newaliases; \
     yum clean all;
 
@@ -47,6 +53,10 @@ RUN { \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
+    echo 'if [ -e /etc/sasldb2 ]; then'; \
+    echo '  rm -f /etc/sasldb2'; \
+    echo 'fi'; \
+    echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c ${AUTH_USER}'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
@@ -66,7 +76,11 @@ ENV TIMEZONE Asia/Tokyo
 
 ENV HOST_NAME smtp.example.com
 ENV DOMAIN_NAME example.com
-ENV MESSAGE_SIZE_LIMIT 10485760
+
+ENV MESSAGE_SIZE_LIMIT 10240000
+
+ENV AUTH_USER user
+ENV AUTH_PASSWORD password
 
 EXPOSE 25
 
