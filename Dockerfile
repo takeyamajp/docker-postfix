@@ -2,12 +2,11 @@ FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
 # postfix
-RUN yum -y install postfix cyrus-sasl cyrus-sasl-md5; \
+RUN yum -y install postfix cyrus-sasl cyrus-sasl-plain; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_auth_enable = yes'; \
     echo 'smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'; \
-    echo 'smtpd_sasl_security_options = noanonymous, noplaintext'; \
     } >> /etc/postfix/main.cf; \
     echo 'sed -i "s/^\(pwcheck_method:\) .*/\1 auxprop/1" /etc/sasl2/smtpd.conf'; \
     newaliases; \
