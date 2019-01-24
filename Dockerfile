@@ -60,6 +60,7 @@ RUN { \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c ${AUTH_USER}'; \
+    echo 'chmod 644 /etc/sasldb2'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
