@@ -5,14 +5,16 @@ MAINTAINER "Hiroki Takeyama"
 RUN yum -y install postfix cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
     { \
+    echo 'smtpd_sasl_path = smtpd'; \
     echo 'smtpd_sasl_auth_enable = yes'; \
-    echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
+    echo 'broken_sasl_auth_clients = yes'; \
     echo 'smtpd_sasl_security_options = noanonymous'; \
+    echo 'smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'; \
     } >> /etc/postfix/main.cf; \
     { \
     echo 'pwcheck_method: auxprop'; \
     echo 'auxprop_plugin: sasldb'; \
-    echo 'mech_list: cram-md5 digest-md5 plain login'; \
+    echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5 NTLM'; \
     } > /etc/sasl2/smtpd.conf; \
     newaliases; \
     yum clean all;
