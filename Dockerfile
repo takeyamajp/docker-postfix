@@ -6,11 +6,12 @@ RUN yum -y install postfix cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_auth_enable = yes'; \
-    echo 'smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'; \
+    echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
     echo 'smtpd_sasl_security_options = noanonymous'; \
     } >> /etc/postfix/main.cf; \
     { \
     echo 'pwcheck_method: auxprop'; \
+    echo 'auxprop_plugin: sasldb'; \
     echo 'mech_list: cram-md5 digest-md5 plain login'; \
     } > /etc/sasl2/smtpd.conf; \
     newaliases; \
@@ -60,7 +61,7 @@ RUN { \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c ${AUTH_USER}'; \
-    echo 'chown postfix /etc/sasldb2'; \
+    echo 'chown postfix:postfix /etc/sasldb2'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
