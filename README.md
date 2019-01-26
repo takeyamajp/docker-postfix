@@ -17,4 +17,5 @@
     ENV AUTH_USER user  
     ENV AUTH_PASSWORD password
     
-    EXPOSE 25
+    EXPOSE 25  
+    EXPOSE 587
