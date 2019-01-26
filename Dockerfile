@@ -14,7 +14,7 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     { \
     echo 'pwcheck_method: auxprop'; \
     echo 'auxprop_plugin: sasldb'; \
-    echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5 NTLM'; \
+    echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5'; \
     } > /etc/sasl2/smtpd.conf; \
     sed -i 's/^#\(submission inet .*\)/\1/1' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/1' /etc/postfix/master.cf; \
