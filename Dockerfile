@@ -18,6 +18,7 @@ RUN yum -y install postfix cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5; \
     } > /etc/sasl2/smtpd.conf; \
     sed -i 's/^#\(submission inet .*)/\1/1' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_sasl_auth_enable.*)/\1/1' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.*smtpd_recipient_restrictions.*)/\1/1' /etc/postfix/master.cf; \
     newaliases; \
     yum clean all;
 
