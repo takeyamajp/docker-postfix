@@ -2,7 +2,7 @@ FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
 # postfix
-RUN yum -y install postfix cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5; \
+RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
