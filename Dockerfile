@@ -9,7 +9,7 @@ RUN yum -y install postfix cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_sasl_auth_enable = yes'; \
     echo 'broken_sasl_auth_clients = yes'; \
     echo 'smtpd_sasl_security_options = noanonymous'; \
-    echo 'smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination'; \
+    echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
     } >> /etc/postfix/main.cf; \
     { \
     echo 'pwcheck_method: auxprop'; \
