@@ -57,14 +57,13 @@ RUN { \
     echo '#!/bin/bash -eu'; \
     echo 'rm -f /etc/localtime'; \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
-    echo 'rm -f /var/log/maillog'; \
-    echo 'touch /var/log/maillog'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c -u ${DOMAIN_NAME} ${AUTH_USER}'; \
     echo 'chown postfix:postfix /etc/sasldb2'; \
-    echo 'sasldblistusers2'; \
+    echo 'rm -f /var/log/maillog'; \
+    echo 'touch /var/log/maillog'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
@@ -87,8 +86,8 @@ ENV DOMAIN_NAME example.com
 
 ENV MESSAGE_SIZE_LIMIT 10240000
 
-ENV AUTH_USER user
-ENV AUTH_PASSWORD user
+ENV AUTH_USER noreply
+ENV AUTH_PASSWORD password
 
 EXPOSE 25
 
