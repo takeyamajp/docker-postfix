@@ -64,6 +64,7 @@ RUN { \
     echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c ${AUTH_USER}'; \
     echo 'chown postfix:postfix /etc/sasldb2'; \
+    echo 'sasldblistusers2'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
