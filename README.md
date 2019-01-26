@@ -14,7 +14,7 @@
     
     ENV MESSAGE_SIZE_LIMIT 10240000
     
-    ENV AUTH_USER noreply  
+    ENV AUTH_USER user  
     ENV AUTH_PASSWORD password
     
     EXPOSE 25
