@@ -67,6 +67,7 @@ RUN { \
     echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c -u ${DOMAIN_NAME} ${AUTH_USER}'; \
     echo 'chown postfix:postfix /etc/sasldb2'; \
+    echo 'chown -R postfix:postfix /mail'; \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
