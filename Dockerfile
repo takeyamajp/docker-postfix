@@ -2,9 +2,7 @@ FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
 # postfix
-RUN mkdir /mail; \
-    yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
-    sed -i 's/^#\(mail_spool_directory =\) \/var\/spool\/mail/\1 \/mail/' /etc/postfix/main.cf; \
+RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
@@ -62,8 +60,6 @@ RUN { \
     echo '#!/bin/bash -eu'; \
     echo 'rm -f /etc/localtime'; \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
-    echo 'mkdir -p /mail/${AUTH_USER}'; \
-    echo 'chown -R ${AUTH_USER}:${AUTH_USER} /mail/${AUTH_USER}'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
@@ -81,6 +77,7 @@ RUN { \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
     echo 'echo "# END SMTP SETTINGS"'; \
     echo '} >> /etc/postfix/main.cf'; \
+    echo 'chown -R postfix:postfix /var/spool/mail'; \
     echo 'exec "$@"'; \
     } > /usr/local/bin/entrypoint.sh; \
     chmod +x /usr/local/bin/entrypoint.sh;
@@ -96,7 +93,7 @@ ENV MESSAGE_SIZE_LIMIT 10240000
 ENV AUTH_USER user
 ENV AUTH_PASSWORD password
 
-VOLUME /mail
+VOLUME /var/spool/mail
 
 EXPOSE 25
 EXPOSE 587
