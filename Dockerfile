@@ -67,6 +67,7 @@ RUN { \
     echo 'chown postfix:postfix /etc/sasldb2'; \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
+    echo 'rm -rf /var/spool/mail/*'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
