@@ -77,7 +77,7 @@ RUN { \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
     echo 'echo "# END SMTP SETTINGS"'; \
     echo '} >> /etc/postfix/main.cf'; \
-    echo 'chown -R postfix:postfix /var/spool/mail'; \
+    echo 'chown -R postfix:postfix /var/mail'; \
     echo 'exec "$@"'; \
     } > /usr/local/bin/entrypoint.sh; \
     chmod +x /usr/local/bin/entrypoint.sh;
@@ -93,7 +93,7 @@ ENV MESSAGE_SIZE_LIMIT 10240000
 ENV AUTH_USER user
 ENV AUTH_PASSWORD password
 
-VOLUME /var/spool/mail
+VOLUME /var/mail
 
 EXPOSE 25
 EXPOSE 587
