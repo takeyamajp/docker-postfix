@@ -4,8 +4,8 @@ MAINTAINER "Hiroki Takeyama"
 # postfix
 RUN mkdir /mail; \
     yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
-    sed -i 's/^#\(mail_spool_directory =\) .*/\1 \/mail/1' /etc/postfix/main.cf; \
-    sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
+    sed -i 's/^#\(mail_spool_directory =\) \/var\/spool\/mail/\1 \/mail/' /etc/postfix/main.cf; \
+    sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
     echo 'smtpd_sasl_auth_enable = yes'; \
@@ -18,24 +18,24 @@ RUN mkdir /mail; \
     echo 'auxprop_plugin: sasldb'; \
     echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5'; \
     } > /etc/sasl2/smtpd.conf; \
-    sed -i 's/^#\(submission inet .*\)/\1/1' /etc/postfix/master.cf; \
-    sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/1' /etc/postfix/master.cf; \
-    sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/1' /etc/postfix/master.cf; \
+    sed -i 's/^#\(submission inet .*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
     yum clean all;
 
 # rsyslog
 RUN yum -y install rsyslog; \
-    sed -i 's/^\(\$SystemLogSocketName\) .*/\1 \/dev\/log/1' /etc/rsyslog.d/listen.conf; \
-    sed -i 's/^\(\$ModLoad imjournal\)/#\1/1' /etc/rsyslog.conf; \
-    sed -i 's/^\(\$OmitLocalLogging\) .*/\1 off/1' /etc/rsyslog.conf; \
-    sed -i 's/^\(\$IMJournalStateFile .*\)/#\1/1' /etc/rsyslog.conf; \
+    sed -i 's/^\(\$SystemLogSocketName\) .*/\1 \/dev\/log/' /etc/rsyslog.d/listen.conf; \
+    sed -i 's/^\(\$ModLoad imjournal\)/#\1/' /etc/rsyslog.conf; \
+    sed -i 's/^\(\$OmitLocalLogging\) .*/\1 off/' /etc/rsyslog.conf; \
+    sed -i 's/^\(\$IMJournalStateFile .*\)/#\1/' /etc/rsyslog.conf; \
     yum clean all;
 
 # supervisor
 RUN yum -y install epel-release; \
     yum -y --enablerepo=epel install supervisor; \
-    sed -i 's/^\(nodaemon\)=false/\1=true/1' /etc/supervisord.conf; \
+    sed -i 's/^\(nodaemon\)=false/\1=true/' /etc/supervisord.conf; \
     sed -i '/^\[unix_http_server\]$/a username=dummy' /etc/supervisord.conf; \
     sed -i '/^\[unix_http_server\]$/a password=dummy' /etc/supervisord.conf; \
     sed -i '/^\[supervisorctl\]$/a username=dummy' /etc/supervisord.conf; \
