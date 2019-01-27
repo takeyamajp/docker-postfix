@@ -2,7 +2,9 @@ FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
 # postfix
-RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
+RUN mkdir /mail; \
+    yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
+    sed -i 's/^#\(mail_spool_directory =\) .*/\1 \/mail/1' /etc/postfix/main.cf; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/1' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
@@ -67,7 +69,6 @@ RUN { \
     echo 'chown postfix:postfix /etc/sasldb2'; \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
-    echo 'rm -rf /var/spool/mail/*'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
