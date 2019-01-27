@@ -63,7 +63,7 @@ RUN { \
     echo 'rm -f /etc/localtime'; \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
     echo 'mkdir -p /mail/${AUTH_USER}'; \
-    echo 'chown -R postfix:postfix /mail'; \
+    echo 'chown -R ${AUTH_USER}:${AUTH_USER} /mail/${AUTH_USER}'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
