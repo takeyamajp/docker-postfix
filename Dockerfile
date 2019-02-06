@@ -22,15 +22,15 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     newaliases; \
     openssl genrsa -out "/etc/postfix/key.pem" 2048; \
     { \
-    echo 'smtpd_tls_cert_file = /etc/postfix/cert.pem; \
-    echo 'smtpd_tls_key_file = /etc/postfix/key.pem; \
-    echo 'smtpd_tls_security_level = may; \
-    echo 'smtpd_tls_received_header = yes; \
-    echo 'smtpd_tls_loglevel = 1; \
-    echo 'smtp_tls_security_level = may; \
-    echo 'echo 'smtp_tls_loglevel = 1; \
-    echo 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache; \
-    echo 'tls_random_source = dev:/dev/urandom; \
+    echo 'smtpd_tls_cert_file = /etc/postfix/cert.pem'; \
+    echo 'smtpd_tls_key_file = /etc/postfix/key.pem'; \
+    echo 'smtpd_tls_security_level = may'; \
+    echo 'smtpd_tls_received_header = yes'; \
+    echo 'smtpd_tls_loglevel = 1'; \
+    echo 'smtp_tls_security_level = may'; \
+    echo 'smtp_tls_loglevel = 1'; \
+    echo 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache'; \
+    echo 'tls_random_source = dev:/dev/urandom'; \
     } >> /etc/postfix/main.cf; \
     yum clean all;
 
