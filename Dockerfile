@@ -2,7 +2,7 @@ FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
 # postfix
-RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
+RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
@@ -20,6 +20,18 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
+    openssl genrsa -out "/etc/postfix/key.pem" 2048; \
+    { \
+    echo 'smtpd_tls_cert_file = /etc/postfix/cert.pem; \
+    echo 'smtpd_tls_key_file = /etc/postfix/key.pem; \
+    echo 'smtpd_tls_security_level = may; \
+    echo 'smtpd_tls_received_header = yes; \
+    echo 'smtpd_tls_loglevel = 1; \
+    echo 'smtp_tls_security_level = may; \
+    echo 'echo 'smtp_tls_loglevel = 1; \
+    echo 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache; \
+    echo 'tls_random_source = dev:/dev/urandom; \
+    } >> /etc/postfix/main.cf; \
     yum clean all;
 
 # rsyslog
@@ -60,6 +72,10 @@ RUN { \
     echo '#!/bin/bash -eu'; \
     echo 'rm -f /etc/localtime'; \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
+    echo 'if [ -e /etc/postfix/cert.pem ]; then'; \
+    echo '  rm -f /etc/postfix/cert.pem'; \
+    echo 'fi'; \
+    echo 'openssl req -new -key "/etc/postfix/key.pem" -x509 -subj "/CN=${HOST_NAME}" -days 36500 -out "/etc/postfix/cert.pem"'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
