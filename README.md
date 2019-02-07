@@ -19,3 +19,5 @@
     
     EXPOSE 25  
     EXPOSE 587
+    
+    EXPOSE 465
