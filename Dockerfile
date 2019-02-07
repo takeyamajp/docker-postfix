@@ -111,6 +111,7 @@ ENV AUTH_USER user
 ENV AUTH_PASSWORD password
 
 EXPOSE 25
+EXPOSE 465
 EXPOSE 587
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
