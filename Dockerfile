@@ -16,9 +16,11 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     echo 'auxprop_plugin: sasldb'; \
     echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5'; \
     } > /etc/sasl2/smtpd.conf; \
-    sed -i 's/^#\(submission inet .*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(submission .*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(smtps .*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.*smtpd_tls_wrappermode.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
     openssl genrsa -aes128 -passout pass:dummy -out "/etc/postfix/key.pass.pem" 2048; \
     openssl rsa -passin pass:dummy -in "/etc/postfix/key.pass.pem" -out "/etc/postfix/key.pem"; \
