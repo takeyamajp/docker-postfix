@@ -20,7 +20,9 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
-    openssl genrsa -out "/etc/postfix/key.pem" 2048; \
+    openssl genrsa -aes128 -passout pass:dummy -out "/etc/postfix/key.pass.pem" 2048
+    openssl rsa -passin pass:dummy -in "/etc/postfix/key.pass.pem" -out "/etc/postfix/key.pem"
+    rm -f "/etc/postfix/key.pass.pem"
     { \
     echo 'smtpd_tls_cert_file = /etc/postfix/cert.pem'; \
     echo 'smtpd_tls_key_file = /etc/postfix/key.pem'; \
@@ -75,7 +77,8 @@ RUN { \
     echo 'if [ -e /etc/postfix/cert.pem ]; then'; \
     echo '  rm -f /etc/postfix/cert.pem'; \
     echo 'fi'; \
-    echo 'openssl req -new -key "/etc/postfix/key.pem" -x509 -subj "/CN=${HOST_NAME}" -days 36500 -out "/etc/postfix/cert.pem"'; \
+    echo 'openssl req -new -key "/etc/postfix/key.pem" -subj "/CN=${HOST_NAME}" -out "/etc/postfix/csr.pem"'; \
+    echo 'openssl x509 -req -days 36500 -in "/etc/postfix/csr.pem" -signkey "/etc/postfix/key.pem" -out "/etc/postfix/cert.pem"'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
