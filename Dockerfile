@@ -20,9 +20,9 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
-    openssl genrsa -aes128 -passout pass:dummy -out "/etc/postfix/key.pass.pem" 2048
-    openssl rsa -passin pass:dummy -in "/etc/postfix/key.pass.pem" -out "/etc/postfix/key.pem"
-    rm -f "/etc/postfix/key.pass.pem"
+    openssl genrsa -aes128 -passout pass:dummy -out "/etc/postfix/key.pass.pem" 2048; \
+    openssl rsa -passin pass:dummy -in "/etc/postfix/key.pass.pem" -out "/etc/postfix/key.pem"; \
+    rm -f "/etc/postfix/key.pass.pem"; \
     { \
     echo 'smtpd_tls_cert_file = /etc/postfix/cert.pem'; \
     echo 'smtpd_tls_key_file = /etc/postfix/key.pem'; \
