@@ -22,6 +22,9 @@
     
     EXPOSE 465
 
+## Message size limit
+Increase the value of MESSAGE_SIZE_LIMIT, if you send a mail of more than 10MB size.
+
 ## Username
 The user name used at authentication will be a format like a e-mail address (e.g. user@example.com).  
 
