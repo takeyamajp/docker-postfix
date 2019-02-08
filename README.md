@@ -24,17 +24,17 @@
     EXPOSE 465
 
 ## How to use
-    docker run -d \  
-    -e TIMEZONE=Asia/Tokyo \  
-    -e HOST_NAME=smtp.example.com \  
-    -e DOMAIN_NAME=example.com \  
-    -e MESSAGE_SIZE_LIMIT=10240000 \  
-    -e AUTH_USER=user \  
-    -e AUTH_PASSWORD=password \  
-    -p 8025:25 \  
-    -p 8587:587 \  
-    -p 8465:465 \  
-    takeyamajp/postfix 
+    docker run -d --name postfix \  
+           -e TIMEZONE=Asia/Tokyo \  
+           -e HOST_NAME=smtp.example.com \  
+           -e DOMAIN_NAME=example.com \  
+           -e MESSAGE_SIZE_LIMIT=10240000 \  
+           -e AUTH_USER=user \  
+           -e AUTH_PASSWORD=password \  
+           -p 8025:25 \  
+           -p 8587:587 \  
+           -p 8465:465 \  
+           takeyamajp/postfix 
 
 ## Timezone
 You can use any time zone that can be used in CentOS such as America/Chicago.  
