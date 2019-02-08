@@ -24,6 +24,7 @@
 
 ## Username
 The user name used at authentication will be a format like a e-mail address (e.g. user@example.com).  
+
 It won't be included in a sent mail, so you can use any sender address according to your purpose.
 
 ## Port No.
