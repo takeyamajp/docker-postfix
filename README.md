@@ -21,3 +21,11 @@
     EXPOSE 587
     
     EXPOSE 465
+
+#Username
+The user name used at authentication will be a format like a e-mail address (e.g. user@example.com).
+It won't be included in a sent mail, so you can use any sender address according to your purpose.
+
+#Port No.
+You can usually use port 25 or 587.
+Use port 465 if your client needs SMTPS(SMTP over SSL), then ignore a displayed certificate warning.
