@@ -24,7 +24,7 @@
     EXPOSE 465
 
 ## How to use
-You can send a mail using secure connection (SSL/TLZ).
+You can send a mail using secure connection (SSL/TLS).
 
     docker run -d --name postfix \  
            -e TIMEZONE=Asia/Tokyo \  
