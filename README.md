@@ -54,7 +54,7 @@ It won't be included in a sent mail, so you can use any sender address according
 
 ## Port No.
 You can usually use port 25 or 587.  
-Use port 465 only if your mail client needs SMTPS(SMTP over SSL), then ignore a displayed certificate warning.
+Use port 465 only if your mail client needs SMTPS (SMTP over SSL), then ignore a displayed certificate warning.
 
 ## Logging
 This container logs all failed and successful deliveries to 'docker logs'.
