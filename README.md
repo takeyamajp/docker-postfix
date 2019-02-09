@@ -25,7 +25,7 @@
 
 ## How to use
 You can send a mail using a secure connection (SSL/TLS).  
-In advance you have to add a A record and SPF record to your DNS server.
+In advance you may have to add a A record and SPF record to your DNS server.
 
     docker run -d --name postfix \  
            -e TIMEZONE=Asia/Tokyo \  
