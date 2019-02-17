@@ -24,7 +24,7 @@
     EXPOSE 465
 
 ## How to use
-You can send a mail using secure connection (SSL/TLS).  
+You can send a mail using a secure connection (SSL/TLS).  
 In advance you may need to add a SPF record to your DNS server in order that your mail avoids being marked as a spam.
 
     docker run -d --name postfix \  
