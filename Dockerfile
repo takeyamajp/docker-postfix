@@ -50,6 +50,7 @@ RUN yum -y install rsyslog; \
 RUN yum -y install epel-release; \
     yum -y --enablerepo=epel install supervisor; \
     sed -i 's/^\(nodaemon\)=false/\1=true/' /etc/supervisord.conf; \
+    sed -i 's/^;\(user\)=chrism/\1=root/' /etc/supervisord.conf; \
     sed -i '/^\[unix_http_server\]$/a username=dummy' /etc/supervisord.conf; \
     sed -i '/^\[unix_http_server\]$/a password=dummy' /etc/supervisord.conf; \
     sed -i '/^\[supervisorctl\]$/a username=dummy' /etc/supervisord.conf; \
