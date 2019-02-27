@@ -66,7 +66,7 @@ RUN yum -y install epel-release; \
     } > /etc/supervisord.d/rsyslog.ini; \
     { \
     echo '[program:tail]'; \
-    echo 'command=/usr/bin/tail -f /var/log/maillog'; \
+    echo 'command=/usr/bin/tail -F /var/log/maillog'; \
     echo 'stdout_logfile=/dev/fd/1'; \
     echo 'stdout_logfile_maxbytes=0'; \
     } > /etc/supervisord.d/tail.ini; \
