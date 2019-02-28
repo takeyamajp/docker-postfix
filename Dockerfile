@@ -1,6 +1,12 @@
 FROM centos:centos7
 MAINTAINER "Hiroki Takeyama"
 
+# certificate
+RUN mkdir /cert; \
+    openssl genrsa -aes128 -passout pass:dummy -out "/cert/key.pass.pem" 2048; \
+    openssl rsa -passin pass:dummy -in "/cert/key.pass.pem" -out "/cert/key.pem"; \
+    rm -f "/cert/key.pass.pem";
+
 # postfix
 RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
@@ -22,12 +28,9 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5 openssl; \
     sed -i 's/^#\(smtps .*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.*smtpd_tls_wrappermode.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
-    openssl genrsa -aes128 -passout pass:dummy -out "/etc/postfix/key.pass.pem" 2048; \
-    openssl rsa -passin pass:dummy -in "/etc/postfix/key.pass.pem" -out "/etc/postfix/key.pem"; \
-    rm -f "/etc/postfix/key.pass.pem"; \
     { \
-    echo 'smtpd_tls_cert_file = /etc/postfix/cert.pem'; \
-    echo 'smtpd_tls_key_file = /etc/postfix/key.pem'; \
+    echo 'smtpd_tls_cert_file = /cert/cert.pem'; \
+    echo 'smtpd_tls_key_file = /cert/key.pem'; \
     echo 'smtpd_tls_security_level = may'; \
     echo 'smtpd_tls_received_header = yes'; \
     echo 'smtpd_tls_loglevel = 1'; \
@@ -51,10 +54,8 @@ RUN yum -y install epel-release; \
     yum -y --enablerepo=epel install supervisor; \
     sed -i 's/^\(nodaemon\)=false/\1=true/' /etc/supervisord.conf; \
     sed -i 's/^;\(user\)=chrism/\1=root/' /etc/supervisord.conf; \
-    sed -i '/^\[unix_http_server\]$/a username=dummy' /etc/supervisord.conf; \
-    sed -i '/^\[unix_http_server\]$/a password=dummy' /etc/supervisord.conf; \
-    sed -i '/^\[supervisorctl\]$/a username=dummy' /etc/supervisord.conf; \
-    sed -i '/^\[supervisorctl\]$/a password=dummy' /etc/supervisord.conf; \
+    sed -i '/^\[unix_http_server\]$/a username=dummy\npassword=dummy' /etc/supervisord.conf; \
+    sed -i '/^\[supervisorctl\]$/a username=dummy\npassword=dummy' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
@@ -77,15 +78,15 @@ RUN { \
     echo '#!/bin/bash -eu'; \
     echo 'rm -f /etc/localtime'; \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
-    echo 'openssl req -new -key "/etc/postfix/key.pem" -subj "/CN=${HOST_NAME}" -out "/etc/postfix/csr.pem"'; \
-    echo 'openssl x509 -req -days 36500 -in "/etc/postfix/csr.pem" -signkey "/etc/postfix/key.pem" -out "/etc/postfix/cert.pem" &>/dev/null'; \
+    echo 'rm -f /var/log/maillog'; \
+    echo 'touch /var/log/maillog'; \
+    echo 'openssl req -new -key "/cert/key.pem" -subj "/CN=${HOST_NAME}" -out "/cert/csr.pem"'; \
+    echo 'openssl x509 -req -days 36500 -in "/cert/csr.pem" -signkey "/cert/key.pem" -out "/cert/cert.pem" &>/dev/null'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c -u ${DOMAIN_NAME} ${AUTH_USER}'; \
     echo 'chown postfix:postfix /etc/sasldb2'; \
-    echo 'rm -f /var/log/maillog'; \
-    echo 'touch /var/log/maillog'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
