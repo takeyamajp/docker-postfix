@@ -3,7 +3,7 @@ MAINTAINER "Hiroki Takeyama"
 
 # certificate
 RUN mkdir /cert; \
-    yum -y openssl; \
+    yum -y install openssl; \
     openssl genrsa -aes128 -passout pass:dummy -out "/cert/key.pass.pem" 2048; \
     openssl rsa -passin pass:dummy -in "/cert/key.pass.pem" -out "/cert/key.pem"; \
     rm -f /cert/key.pass.pem; \
