@@ -36,7 +36,6 @@ In advance you may need to add a SPF record to your DNS server in order that you
            -e MESSAGE_SIZE_LIMIT=10240000 \  
            -e AUTH_USER=user \  
            -e AUTH_PASSWORD=password \  
-           -p 8025:25 \  
            -p 8587:587 \  
            -p 8465:465 \  
            takeyamajp/postfix 
