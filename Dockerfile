@@ -19,7 +19,7 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_sasl_security_options = noanonymous'; \
     echo 'disable_vrfy_command = yes'; \
     echo 'smtpd_helo_required = yes'; \
-    echo 'smtpd_helo_restrictions = permit_mynetworks, reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname'; \
+    echo 'smtpd_helo_restrictions = permit_sasl_authenticated, reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname'; \
     echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
     echo 'smtpd_sender_restrictions = reject_unknown_sender_domain'; \
     } >> /etc/postfix/main.cf; \
