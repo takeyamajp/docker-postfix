@@ -17,7 +17,11 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_sasl_auth_enable = yes'; \
     echo 'broken_sasl_auth_clients = yes'; \
     echo 'smtpd_sasl_security_options = noanonymous'; \
+    echo 'disable_vrfy_command = yes'; \
+    echo 'smtpd_helo_required = yes'; \
+    echo 'smtpd_helo_restrictions = permit_mynetworks, reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname'; \
     echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
+    echo 'smtpd_sender_restrictions = reject_unknown_sender_domain'; \
     } >> /etc/postfix/main.cf; \
     { \
     echo 'pwcheck_method: auxprop'; \
@@ -25,10 +29,11 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5'; \
     } > /etc/sasl2/smtpd.conf; \
     sed -i 's/^#\(submission .*\)/\1/' /etc/postfix/master.cf; \
-    sed -i 's/^#\(.*smtpd_sasl_auth_enable.*\)/\1/' /etc/postfix/master.cf; \
-    sed -i 's/^#\(.*smtpd_recipient_restrictions.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(smtps .*\)/\1/' /etc/postfix/master.cf; \
-    sed -i 's/^#\(.*smtpd_tls_wrappermode.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.* syslog_name=.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.* smtpd_sasl_auth_enable=.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.* smtpd_recipient_restrictions=.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.* smtpd_tls_wrappermode=.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
     { \
     echo 'smtpd_tls_cert_file = /cert/cert.pem'; \
@@ -87,6 +92,10 @@ RUN { \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
+    echo 'sed -i "s/^\(smtpd_sasl_auth_enable =\).*/\1 yes/" /etc/postfix/main.cf'; \
+    echo 'if [ ${DISABLE_SMTP_AUTH_ON_PORT_25,,} = "true" ]; then'; \
+    echo '  sed -i "s/^\(smtpd_sasl_auth_enable =\).*/\1 no/" /etc/postfix/main.cf'; \
+    echo 'fi'; \
     echo 'echo "${AUTH_PASSWORD}" | /usr/sbin/saslpasswd2 -p -c -u ${DOMAIN_NAME} ${AUTH_USER}'; \
     echo 'chown postfix:postfix /etc/sasldb2'; \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
@@ -113,6 +122,8 @@ ENV MESSAGE_SIZE_LIMIT 10240000
 
 ENV AUTH_USER user
 ENV AUTH_PASSWORD password
+
+ENV DISABLE_SMTP_AUTH_ON_PORT_25 true
 
 EXPOSE 25
 EXPOSE 587
