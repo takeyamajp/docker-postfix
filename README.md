@@ -20,9 +20,11 @@
     
     ENV DISABLE_SMTP_AUTH_ON_PORT_25 true
     
+    # SMTP  
     EXPOSE 25  
-    EXPOSE 587
-    
+    # Submission  
+    EXPOSE 587  
+    # SMTPS  
     EXPOSE 465
 
 ## How to use
