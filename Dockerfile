@@ -22,6 +22,15 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_helo_restrictions = permit_sasl_authenticated, reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname'; \
     echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
     echo 'smtpd_sender_restrictions = reject_unknown_sender_domain'; \
+    echo 'smtpd_tls_cert_file = /cert/cert.pem'; \
+    echo 'smtpd_tls_key_file = /cert/key.pem'; \
+    echo 'smtpd_tls_security_level = may'; \
+    echo 'smtpd_tls_received_header = yes'; \
+    echo 'smtpd_tls_loglevel = 1'; \
+    echo 'smtp_tls_security_level = may'; \
+    echo 'smtp_tls_loglevel = 1'; \
+    echo 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache'; \
+    echo 'tls_random_source = dev:/dev/urandom'; \
     } >> /etc/postfix/main.cf; \
     { \
     echo 'pwcheck_method: auxprop'; \
@@ -35,17 +44,6 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^#\(.* smtpd_recipient_restrictions=.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.* smtpd_tls_wrappermode=.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
-    { \
-    echo 'smtpd_tls_cert_file = /cert/cert.pem'; \
-    echo 'smtpd_tls_key_file = /cert/key.pem'; \
-    echo 'smtpd_tls_security_level = may'; \
-    echo 'smtpd_tls_received_header = yes'; \
-    echo 'smtpd_tls_loglevel = 1'; \
-    echo 'smtp_tls_security_level = may'; \
-    echo 'smtp_tls_loglevel = 1'; \
-    echo 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache'; \
-    echo 'tls_random_source = dev:/dev/urandom'; \
-    } >> /etc/postfix/main.cf; \
     yum clean all;
 
 # rsyslog
@@ -103,7 +101,6 @@ RUN { \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
     echo 'echo "myhostname = ${HOST_NAME}"'; \
     echo 'echo "mydomain = ${DOMAIN_NAME}"'; \
-    echo 'echo "myorigin = \$mydomain"'; \
     echo 'echo "smtpd_banner = \$myhostname ESMTP unknown"'; \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
     echo 'echo "# END SMTP SETTINGS"'; \
