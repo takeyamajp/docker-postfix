@@ -3,10 +3,10 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/takeyamajp/postfix.svg)](https://hub.docker.com/r/takeyamajp/postfix/)
 [![license](https://img.shields.io/github/license/takeyamajp/docker-postfix.svg)](https://github.com/takeyamajp/docker-postfix/blob/master/LICENSE)
 
-### Supported tags and respective Dockerfile links  
+## Supported tags and respective Dockerfile links  
 - [`latest`, `centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
-### Image summary
+## Image summary
     FROM centos:centos7  
     MAINTAINER "Hiroki Takeyama"
     
