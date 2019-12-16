@@ -52,7 +52,7 @@ See below for zones.
 https://www.unicode.org/cldr/charts/latest/verify/zones/en.html
 
 ## Message size limit
-The maximum size in bytes of a mail you can send. (include attached files)  
+The maximum size in bytes of a mail you can send. (attached files included)  
 Increase the value of MESSAGE_SIZE_LIMIT, if you send a mail of more than 10MB size.
 
 ## Username
