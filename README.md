@@ -4,8 +4,8 @@
 [![license](https://img.shields.io/github/license/takeyamajp/docker-postfix.svg)](https://github.com/takeyamajp/docker-postfix/blob/master/LICENSE)
 
 ## Supported tags and respective Dockerfile links  
-- [`latest`, `centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile)
-- [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
+- [`latest`, `centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
+- [`centos8` test image](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile)
 
 ## Image summary
     FROM centos:centos8  
