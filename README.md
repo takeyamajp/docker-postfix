@@ -8,7 +8,7 @@
 - [`centos8` (Test image)](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile)
 
 ## Image summary
-    FROM centos:centos8  
+    FROM centos:centos7  
     MAINTAINER "Hiroki Takeyama"
     
     ENV TIMEZONE Asia/Tokyo
