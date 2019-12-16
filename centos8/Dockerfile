@@ -48,10 +48,6 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
 
 # rsyslog
 RUN dnf -y install rsyslog; \
-    sed -i 's/^\(\$SystemLogSocketName\) .*/\1 \/dev\/log/' /etc/rsyslog.d/listen.conf; \
-    sed -i 's/^\(\$ModLoad imjournal\)/#\1/' /etc/rsyslog.conf; \
-    sed -i 's/^\(\$OmitLocalLogging\) .*/\1 off/' /etc/rsyslog.conf; \
-    sed -i 's/^\(\$IMJournalStateFile .*\)/#\1/' /etc/rsyslog.conf; \
     dnf clean all;
 
 # supervisor
