@@ -63,7 +63,7 @@ RUN mkdir /run/supervisor; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
-    echo 'priority=1'; \
+    echo 'priority=3'; \
     echo 'startsecs=0'; \
     } > /etc/supervisord.d/postfix.ini; \
     { \
@@ -74,7 +74,7 @@ RUN mkdir /run/supervisor; \
     { \
     echo '[program:tail]'; \
     echo 'command=/usr/bin/tail -F /var/log/maillog'; \
-    echo 'priority=3'; \
+    echo 'priority=1'; \
     echo 'stdout_logfile=/dev/fd/1'; \
     echo 'stdout_logfile_maxbytes=0'; \
     } > /etc/supervisord.d/tail.ini; \
