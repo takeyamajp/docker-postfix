@@ -50,7 +50,6 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
 RUN dnf -y install rsyslog; \
     sed -i 's/\(SysSock\.Use=.*\)/SysSock\.Name="\/dev\/log" \1/' /etc/rsyslog.conf; \
     sed -i 's/^\(.*"imjournal\)/#\1/' /etc/rsyslog.conf; \
-    SysSock.Use=
     dnf clean all;
 
 # supervisor
