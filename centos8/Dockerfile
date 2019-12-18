@@ -86,7 +86,7 @@ RUN { \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
-    echo 'openssl req -new -key "/cert/key.pem" -subj "/CN=${HOST_NAME}" -out "/cert/csr.pem"'; \
+    echo 'openssl req -new -sha384 -key "/cert/key.pem" -subj "/CN=${HOST_NAME}" -out "/cert/csr.pem"'; \
     echo 'openssl x509 -req -days 36500 -in "/cert/csr.pem" -signkey "/cert/key.pem" -out "/cert/cert.pem" &>/dev/null'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
