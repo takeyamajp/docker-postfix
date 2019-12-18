@@ -4,7 +4,7 @@ MAINTAINER "Hiroki Takeyama"
 # certificate
 RUN mkdir /cert; \
     dnf -y install openssl; \
-    openssl genrsa -aes256 -passout pass:dummy -out "/cert/key.pass.pem" 3072; \
+    openssl genrsa -aes256 -passout pass:dummy -out "/cert/key.pass.pem" 2048; \
     openssl rsa -passin pass:dummy -in "/cert/key.pass.pem" -out "/cert/key.pem"; \
     rm -f /cert/key.pass.pem; \
     dnf clean all;
