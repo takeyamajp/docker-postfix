@@ -110,7 +110,6 @@ RUN { \
     echo 'exec "$@"'; \
     } > /usr/local/bin/entrypoint.sh; \
     chmod +x /usr/local/bin/entrypoint.sh;
-ENTRYPOINT ["entrypoint.sh"]
 
 ENV TIMEZONE Asia/Tokyo
 
@@ -131,4 +130,5 @@ EXPOSE 587
 # SMTPS
 EXPOSE 465
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
