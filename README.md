@@ -44,7 +44,7 @@ In advance you may need to add a SPF record to your DNS server in order that you
            -e DISABLE_SMTP_AUTH_ON_PORT_25=true \  
            -p 8587:587 \  
            -p 8465:465 \  
-           takeyamajp/postfix 
+           takeyamajp/postfix
 
 ## Timezone
 You can use any time zone that can be used in CentOS such as America/Chicago.  
