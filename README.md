@@ -46,7 +46,7 @@ In advance you may need to add a SPF record to your DNS server in order that you
            -p 8465:465 \  
            takeyamajp/postfix
 
-## Timezone
+## Time zone
 You can use any time zone that can be used in CentOS such as America/Chicago.  
 
 See below for zones.  
