@@ -47,7 +47,7 @@ In advance you may need to add a SPF record to your DNS server in order that you
            takeyamajp/postfix
 
 ## Time zone
-You can use any time zone that can be used in CentOS such as America/Chicago.  
+You can use any time zone such as America/Chicago that can be used in CentOS.  
 
 See below for zones.  
 https://www.unicode.org/cldr/charts/latest/verify/zones/en.html
