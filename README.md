@@ -5,12 +5,12 @@ Star this repository if it is useful for you.
 [![license](https://img.shields.io/github/license/takeyamajp/docker-postfix.svg)](https://github.com/takeyamajp/docker-postfix/blob/master/LICENSE)
 
 ## Supported tags and respective Dockerfile links  
-- `rocky8` (Rocky Linux 8.3)
-- [`latest`, `centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (We'll finish support of CentOS8 in 31 December 2021.)
+- [`latest`, `rocky8`](https://github.com/takeyamajp/docker-postfix/blob/master/rocky8/Dockerfile) (Rocky Linux)
+- [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (We'll finish support of CentOS8 in 31 December 2021.)
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
 ## Image summary
-    FROM centos:centos8  
+    FROM rockylinux/rockylinux:8  
     MAINTAINER "Hiroki Takeyama"
     
     ENV TIMEZONE Asia/Tokyo
@@ -49,7 +49,7 @@ In advance you may need to add a SPF record to your DNS server in order that you
            takeyamajp/postfix
 
 ## Time zone
-You can use any time zone such as America/Chicago that can be used in CentOS.  
+You can use any time zone such as America/Chicago that can be used in Rocky Linux.  
 
 See below for zones.  
 https://www.unicode.org/cldr/charts/latest/verify/zones/en.html
