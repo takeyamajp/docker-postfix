@@ -4,6 +4,9 @@ Star this repository if it is useful for you.
 [![Docker Pulls](https://img.shields.io/docker/pulls/takeyamajp/postfix.svg)](https://hub.docker.com/r/takeyamajp/postfix/)
 [![license](https://img.shields.io/github/license/takeyamajp/docker-postfix.svg)](https://github.com/takeyamajp/docker-postfix/blob/master/LICENSE)
 
+`English`  
+[`Japanese (日本語)`](https://github.com/takeyamajp/docker-postfix/blob/master/README.ja.md)
+
 ## Supported tags and respective Dockerfile links  
 - [`latest`, `rocky8`](https://github.com/takeyamajp/docker-postfix/blob/master/rocky8/Dockerfile) (Rocky Linux)
 - [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (We'll finish support of CentOS8 in 31 December 2021.)
