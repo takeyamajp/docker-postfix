@@ -1,5 +1,5 @@
 # postfix
-もし有用なら、このリポジトリーをスターしていただけると嬉しいです。  
+もし有用なら、このリポジトリーにスターを付けていただけると嬉しいです。  
 [![Docker Stars](https://img.shields.io/docker/stars/takeyamajp/postfix.svg)](https://hub.docker.com/r/takeyamajp/postfix/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/takeyamajp/postfix.svg)](https://hub.docker.com/r/takeyamajp/postfix/)
 [![license](https://img.shields.io/github/license/takeyamajp/docker-postfix.svg)](https://github.com/takeyamajp/docker-postfix/blob/master/LICENSE)
