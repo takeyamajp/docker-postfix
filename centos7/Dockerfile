@@ -12,6 +12,8 @@ RUN mkdir /cert; \
 # postfix
 RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
+    sed -i 's/^\(smtpd_tls_cert_file =\) .*/\1 \/cert\/cert.pem/' /etc/postfix/main.cf; \
+    sed -i 's/^\(smtpd_tls_key_file =\) .*/\1 \/cert\/key.pem/' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
     echo 'smtpd_sasl_auth_enable = yes'; \
@@ -22,8 +24,6 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_helo_restrictions = permit_sasl_authenticated, reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname'; \
     echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
     echo 'smtpd_sender_restrictions = reject_non_fqdn_sender, reject_unknown_sender_domain'; \
-    echo 'smtpd_tls_cert_file = /cert/cert.pem'; \
-    echo 'smtpd_tls_key_file = /cert/key.pem'; \
     echo 'smtpd_tls_security_level = may'; \
     echo 'smtpd_tls_received_header = yes'; \
     echo 'smtpd_tls_loglevel = 1'; \
@@ -46,6 +46,17 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     newaliases; \
     yum clean all;
 
+# opendkim
+RUN mkdir /keys; \
+    yum -y install epel-release; \
+    yum -y install opendkim; \
+    sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
+    sed -i 's/^\(SoftwareHeader\t\).*/\1no/' /etc/opendkim.conf; \
+    sed -i 's/^# *\(Domain\t.*\)/\1/' /etc/opendkim.conf; \
+    sed -i 's/^\(KeyFile\t\).*/\1\/keys\/default\.private/' /etc/opendkim.conf; \
+    echo 'smtpd_milters = inet:localhost:8891' >> /etc/postfix/main.cf; \
+    yum clean all;
+
 # rsyslog
 RUN yum -y install rsyslog; \
     sed -i 's/^\(\$SystemLogSocketName\) .*/\1 \/dev\/log/' /etc/rsyslog.d/listen.conf; \
@@ -55,8 +66,7 @@ RUN yum -y install rsyslog; \
     yum clean all;
 
 # supervisor
-RUN yum -y install epel-release; \
-    yum -y install supervisor; \
+RUN yum -y install supervisor; \
     sed -i 's/^\(nodaemon\)=false/\1=true/' /etc/supervisord.conf; \
     sed -i 's/^;\(user\)=chrism/\1=root/' /etc/supervisord.conf; \
     sed -i '/^\[unix_http_server\]$/a username=dummy\npassword=dummy' /etc/supervisord.conf; \
@@ -64,9 +74,14 @@ RUN yum -y install epel-release; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
-    echo 'priority=3'; \
+    echo 'priority=4'; \
     echo 'startsecs=0'; \
     } > /etc/supervisord.d/postfix.ini; \
+    { \
+    echo '[program:opendkim]'; \
+    echo 'command=/usr/sbin/opendkim -f -x /etc/opendkim.conf'; \
+    echo 'priority=3'; \
+    } > /etc/supervisord.d/opendkim.ini; \
     { \
     echo '[program:rsyslog]'; \
     echo 'command=/usr/sbin/rsyslogd -n'; \
@@ -107,6 +122,21 @@ RUN { \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
     echo 'echo "# END SMTP SETTINGS"'; \
     echo '} >> /etc/postfix/main.cf'; \
+    echo 'if [ -e /etc/supervisord.d/opendkim.ini ]; then'; \
+    echo '  mv /etc/supervisord.d/opendkim.ini /etc/supervisord.d/opendkim.disabled'; \
+    echo 'fi'; \
+    echo 'sed -i "s/^\(smtpd_milters .*\)/#\1/" /etc/postfix/main.cf'; \
+    echo 'if [ ${ENABLE_DKIM,,} = "true" ]; then'; \
+    echo '  mv /etc/supervisord.d/opendkim.disabled /etc/supervisord.d/opendkim.ini'; \
+    echo '  sed -i "s/^#\(smtpd_milters .*\)/\1/" /etc/postfix/main.cf'; \
+    echo '  sed -i "s/^\(Domain\t\).*/\1${DOMAIN_NAME}/" /etc/opendkim.conf'; \
+    echo '  sed -i "s/^\(Selector\t\).*/\1${DKIM_SELECTOR}/" /etc/opendkim.conf'; \
+    echo '  if [ ! -e /keys/${DKIM_SELECTOR}.private ] || [ ! -e /keys/${DKIM_SELECTOR}.txt ]; then'; \
+    echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -D /keys'; \
+    echo '  fi'; \
+    echo '  chown opendkim:opendkim /keys/${DKIM_SELECTOR}.private'; \
+    echo '  cat /keys/${DKIM_SELECTOR}.txt'; \
+    echo 'fi'; \
     echo 'exec "$@"'; \
     } > /usr/local/bin/entrypoint.sh; \
     chmod +x /usr/local/bin/entrypoint.sh;
@@ -122,6 +152,13 @@ ENV AUTH_USER user
 ENV AUTH_PASSWORD password
 
 ENV DISABLE_SMTP_AUTH_ON_PORT_25 true
+
+ENV ENABLE_DKIM true
+ENV DKIM_KEY_LENGTH 1024
+ENV DKIM_SELECTOR default
+
+# DKIM
+VOLUME /keys
 
 # SMTP
 EXPOSE 25
