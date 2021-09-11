@@ -92,7 +92,7 @@ Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 to false If you
 ## DKIM
 Public key will be displayed on 'docker logs'.  
 Mount volume '/keys' on your host machine. Otherwise DKIM keys will be changed every time this container starts.  
-You can set DKIM_KEY_LENGTH to 2048 if your DNS server supports TXT records of more than 255 length.
+You can set DKIM_KEY_LENGTH to 2048 if your DNS server supports TXT records of more than 255 length.  
 If you have a mail server besides this container, you will need to change DKIM_SELECTOR from 'default' so that it doesn't overlap with other one.
 
 ## Logging
