@@ -28,6 +28,13 @@
     
     ENV DISABLE_SMTP_AUTH_ON_PORT_25 true
     
+    ENV ENABLE_DKIM true  
+    ENV DKIM_KEY_LENGTH 1024  
+    ENV DKIM_SELECTOR default
+    
+    # DKIM  
+    VOLUME /keys
+    
     # SMTP  
     EXPOSE 25  
     # Submission  
