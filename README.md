@@ -87,12 +87,13 @@ It won't be included in a sent mail, so you can use any sender address according
 ## Port No.
 You can usually use submission port 587.  
 Use port 465 if your mail client needs SMTPS (SMTP over SSL), then ignore a displayed certificate warning.  
-Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 false If you want to use it.
+Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 to false If you want to use it.
 
 ## DKIM
 Public key will be displayed on 'docker logs'.  
 Mount volume '/keys' on your host machine. Otherwise DKIM keys will be changed every time this container starts.  
-If you have a mail server besides this container, You will need to change Selector from 'default' so that it doesn't overlap with other one.
+You can set DKIM_KEY_LENGTH to 2048 if your DNS server supports TXT records of more than 255 length.
+If you have a mail server besides this container, you will need to change DKIM_SELECTOR from 'default' so that it doesn't overlap with other one.
 
 ## Logging
 This container logs all failed and successful deliveries to 'docker logs'.
