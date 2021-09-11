@@ -44,19 +44,31 @@ Star this repository if it is useful for you.
 
 ## How to use
 You can send a mail using a secure connection (SSL/TLS).  
-In advance you may need to add a SPF record to your DNS server in order that your mail avoids being marked as a spam.
+In advance you may need to add SPF, DKIM, DMARC records to your DNS server in order that your mail avoids being marked as a spam.
 
-    docker run -d --name postfix \  
-           -e TIMEZONE=Asia/Tokyo \  
-           -e HOST_NAME=smtp.example.com \  
-           -e DOMAIN_NAME=example.com \  
-           -e MESSAGE_SIZE_LIMIT=10240000 \  
-           -e AUTH_USER=user \  
-           -e AUTH_PASSWORD=password \  
-           -e DISABLE_SMTP_AUTH_ON_PORT_25=true \  
-           -p 8587:587 \  
-           -p 8465:465 \  
-           takeyamajp/postfix
+### via [`docker-compose`](https://github.com/docker/compose)
+
+    version: '3'  
+    services:  
+      postfix:  
+        image: takeyamajp/postfix  
+        ports:  
+          - "8025:25"  
+          - "8587:587"  
+          - "8465:465"  
+        volumes:  
+          - /my/own/datadir:/keys  
+        environment:  
+          TIMEZONE: "Asia/Tokyo"  
+          HOST_NAME: "smtp.example.com"  
+          DOMAIN_NAME: "example.com"  
+          MESSAGE_SIZE_LIMIT: "10240000"  
+          AUTH_USER: "user"  
+          AUTH_PASSWORD: "password"  
+          DISABLE_SMTP_AUTH_ON_PORT_25: "true"  
+          ENABLE_DKIM: "true"  
+          DKIM_KEY_LENGTH: "1024"  
+          DKIM_SELECTOR: "default"
 
 ## Time zone
 You can use any time zone such as America/Chicago that can be used in Rocky Linux.  
@@ -76,6 +88,11 @@ It won't be included in a sent mail, so you can use any sender address according
 You can usually use submission port 587.  
 Use port 465 if your mail client needs SMTPS (SMTP over SSL), then ignore a displayed certificate warning.  
 Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 false If you want to use it.
+
+## DKIM
+Public key will be displayed on 'docker logs'.  
+Mount volume '/keys' on your host machine. Otherwise DKIM keys will be changed every time this container starts.  
+You may need to change Selector from 'default' if you have other mail server.
 
 ## Logging
 This container logs all failed and successful deliveries to 'docker logs'.
