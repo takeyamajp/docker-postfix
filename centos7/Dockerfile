@@ -12,8 +12,6 @@ RUN mkdir /cert; \
 # postfix
 RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
-    sed -i 's/^\(smtpd_tls_cert_file =\) .*/\1 \/cert\/cert.pem/' /etc/postfix/main.cf; \
-    sed -i 's/^\(smtpd_tls_key_file =\) .*/\1 \/cert\/key.pem/' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
     echo 'smtpd_sasl_auth_enable = yes'; \
@@ -24,6 +22,8 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_helo_restrictions = permit_sasl_authenticated, reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname'; \
     echo 'smtpd_recipient_restrictions = permit_sasl_authenticated, reject_unauth_destination'; \
     echo 'smtpd_sender_restrictions = reject_non_fqdn_sender, reject_unknown_sender_domain'; \
+    echo 'smtpd_tls_cert_file = /cert/cert.pem'; \
+    echo 'smtpd_tls_key_file = /cert/key.pem'; \
     echo 'smtpd_tls_security_level = may'; \
     echo 'smtpd_tls_received_header = yes'; \
     echo 'smtpd_tls_loglevel = 1'; \
@@ -49,11 +49,10 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
 # opendkim
 RUN mkdir /keys; \
     yum -y install epel-release; \
-    yum -y install opendkim; \
+    yum -y install opendkim glibc-locale-source; \
     sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
     sed -i 's/^\(SoftwareHeader\t\).*/\1no/' /etc/opendkim.conf; \
     sed -i 's/^# *\(Domain\t.*\)/\1/' /etc/opendkim.conf; \
-    sed -i 's/^\(KeyFile\t\).*/\1\/keys\/default\.private/' /etc/opendkim.conf; \
     echo 'smtpd_milters = inet:localhost:8891' >> /etc/postfix/main.cf; \
     yum clean all;
 
@@ -131,10 +130,13 @@ RUN { \
     echo '  sed -i "s/^#\(smtpd_milters .*\)/\1/" /etc/postfix/main.cf'; \
     echo '  sed -i "s/^\(Domain\t\).*/\1${DOMAIN_NAME}/" /etc/opendkim.conf'; \
     echo '  sed -i "s/^\(Selector\t\).*/\1${DKIM_SELECTOR}/" /etc/opendkim.conf'; \
+    echo '  sed -i "s/^\(KeyFile\t\).*/\1\/etc\/opendkim\/keys\/${DKIM_SELECTOR}\.private/" /etc/opendkim.conf'; \
     echo '  if [ ! -e /keys/${DKIM_SELECTOR}.private ] || [ ! -e /keys/${DKIM_SELECTOR}.txt ]; then'; \
-    echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -D /keys'; \
+    echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -d ${DOMAIN_NAME} -s ${DKIM_SELECTOR} -D /keys'; \
     echo '  fi'; \
-    echo '  chown opendkim:opendkim /keys/${DKIM_SELECTOR}.private'; \
+    echo '  rm -f /etc/opendkim/keys/*.private'; \
+    echo '  cp /keys/${DKIM_SELECTOR}.private /etc/opendkim/keys'; \
+    echo '  chown -R opendkim:opendkim /etc/opendkim/keys'; \
     echo '  cat /keys/${DKIM_SELECTOR}.txt'; \
     echo 'fi'; \
     echo 'exec "$@"'; \
