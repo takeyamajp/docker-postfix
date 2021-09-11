@@ -46,6 +46,16 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     newaliases; \
     dnf clean all;
 
+# opendkim
+RUN mkdir /keys; \
+    dnf -y install epel-release; \
+    dnf -y install opendkim glibc-locale-source; \
+    sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
+    sed -i 's/^\(SoftwareHeader\t\).*/\1no/' /etc/opendkim.conf; \
+    sed -i 's/^# *\(Domain\t.*\)/\1/' /etc/opendkim.conf; \
+    echo 'smtpd_milters = inet:localhost:8891' >> /etc/postfix/main.cf; \
+    dnf clean all;
+
 # rsyslog
 RUN dnf -y install rsyslog; \
     sed -i 's/\(SysSock\.Use\)="off"/\1="on"/' /etc/rsyslog.conf; \
@@ -53,7 +63,6 @@ RUN dnf -y install rsyslog; \
 
 # supervisor
 RUN mkdir /run/supervisor; \
-    dnf -y install epel-release; \
     dnf -y install supervisor; \
     sed -i 's/^\(nodaemon\)=false/\1=true/' /etc/supervisord.conf; \
     sed -i 's/^;\(user\)=chrism/\1=root/' /etc/supervisord.conf; \
@@ -62,9 +71,14 @@ RUN mkdir /run/supervisor; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
-    echo 'priority=3'; \
+    echo 'priority=4'; \
     echo 'startsecs=0'; \
     } > /etc/supervisord.d/postfix.ini; \
+    { \
+    echo '[program:opendkim]'; \
+    echo 'command=/usr/sbin/opendkim -f -x /etc/opendkim.conf'; \
+    echo 'priority=3'; \
+    } > /etc/supervisord.d/opendkim.ini; \
     { \
     echo '[program:rsyslog]'; \
     echo 'command=/usr/sbin/rsyslogd -n'; \
@@ -105,6 +119,24 @@ RUN { \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
     echo 'echo "# END SMTP SETTINGS"'; \
     echo '} >> /etc/postfix/main.cf'; \
+    echo 'if [ -e /etc/supervisord.d/opendkim.ini ]; then'; \
+    echo '  mv /etc/supervisord.d/opendkim.ini /etc/supervisord.d/opendkim.disabled'; \
+    echo 'fi'; \
+    echo 'sed -i "s/^\(smtpd_milters .*\)/#\1/" /etc/postfix/main.cf'; \
+    echo 'if [ ${ENABLE_DKIM,,} = "true" ]; then'; \
+    echo '  mv /etc/supervisord.d/opendkim.disabled /etc/supervisord.d/opendkim.ini'; \
+    echo '  sed -i "s/^#\(smtpd_milters .*\)/\1/" /etc/postfix/main.cf'; \
+    echo '  sed -i "s/^\(Domain\t\).*/\1${DOMAIN_NAME}/" /etc/opendkim.conf'; \
+    echo '  sed -i "s/^\(Selector\t\).*/\1${DKIM_SELECTOR}/" /etc/opendkim.conf'; \
+    echo '  sed -i "s/^\(KeyFile\t\).*/\1\/etc\/opendkim\/keys\/${DKIM_SELECTOR}\.private/" /etc/opendkim.conf'; \
+    echo '  if [ ! -e /keys/${DKIM_SELECTOR}.private ] || [ ! -e /keys/${DKIM_SELECTOR}.txt ]; then'; \
+    echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -d ${DOMAIN_NAME} -s ${DKIM_SELECTOR} -D /keys'; \
+    echo '  fi'; \
+    echo '  rm -f /etc/opendkim/keys/*.private'; \
+    echo '  cp /keys/${DKIM_SELECTOR}.private /etc/opendkim/keys'; \
+    echo '  chown -R opendkim:opendkim /etc/opendkim/keys'; \
+    echo '  cat /keys/${DKIM_SELECTOR}.txt'; \
+    echo 'fi'; \
     echo 'exec "$@"'; \
     } > /usr/local/bin/entrypoint.sh; \
     chmod +x /usr/local/bin/entrypoint.sh;
@@ -120,6 +152,13 @@ ENV AUTH_USER user
 ENV AUTH_PASSWORD password
 
 ENV DISABLE_SMTP_AUTH_ON_PORT_25 true
+
+ENV ENABLE_DKIM true
+ENV DKIM_KEY_LENGTH 1024
+ENV DKIM_SELECTOR default
+
+# DKIM
+VOLUME /keys
 
 # SMTP
 EXPOSE 25
