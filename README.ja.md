@@ -44,19 +44,31 @@
 
 ## 使い方
 このコンテナでは、セキュリティの高い接続 (SSL/TLS) を使ってメールを送信することが出来ます。  
-送信するメールがスパムと判断されないように、事前に DNS サーバーに SPF レコードを追加しておいてください。
+送信するメールがスパムと判断されないように、事前に DNS サーバーに SPF, DKIM, DMARC レコードを追加しておいてください。
 
-    docker run -d --name postfix \  
-           -e TIMEZONE=Asia/Tokyo \  
-           -e HOST_NAME=smtp.example.com \  
-           -e DOMAIN_NAME=example.com \  
-           -e MESSAGE_SIZE_LIMIT=10240000 \  
-           -e AUTH_USER=user \  
-           -e AUTH_PASSWORD=password \  
-           -e DISABLE_SMTP_AUTH_ON_PORT_25=true \  
-           -p 8587:587 \  
-           -p 8465:465 \  
-           takeyamajp/postfix
+### 起動方法：[`docker-compose`](https://github.com/docker/compose)
+
+    version: '3'  
+    services:  
+      postfix:  
+        image: takeyamajp/postfix  
+        ports:  
+          - "8025:25"  
+          - "8587:587"  
+          - "8465:465"  
+        volumes:  
+          - /my/own/datadir:/keys  
+        environment:  
+          TIMEZONE: "Asia/Tokyo"  
+          HOST_NAME: "smtp.example.com"  
+          DOMAIN_NAME: "example.com"  
+          MESSAGE_SIZE_LIMIT: "10240000"  
+          AUTH_USER: "user"  
+          AUTH_PASSWORD: "password"  
+          DISABLE_SMTP_AUTH_ON_PORT_25: "true"  
+          ENABLE_DKIM: "true"  
+          DKIM_KEY_LENGTH: "1024"  
+          DKIM_SELECTOR: "default"
 
 ## タイムゾーン
 Rocky Linux で使用可能な、例えば America/Chicago のようなどんなタイムゾーンでも使用することが出来ます。
@@ -71,6 +83,11 @@ https://www.unicode.org/cldr/charts/latest/verify/zones/en.html
 ## ユーザー名
 認証時に使用するユーザー名は、メールアドレスのような形式になります。（例：user@example.com）  
 このユーザー名は送信するメールには含まれません。メールの送信元アドレスは目的に応じて自由にセットすることができます。
+
+## DKIM
+公開鍵は 'docker logs' に表示されます.  
+ボリューム '/keys' をホストマシンにマウントしてください。そうしないと、このコンテナが起動するたびにDKIMのキーが変更されてしまいます。  
+あなたがこのコンテナ以外にもメールサーバーを持っている場合、セレクタが重複しないように 'default' から別の名前に変更してください。
 
 ## ポート番号
 通常はサブミッションポート 587 を使用してください。  
