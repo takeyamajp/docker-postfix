@@ -92,7 +92,7 @@ Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 false If you wa
 ## DKIM
 Public key will be displayed on 'docker logs'.  
 Mount volume '/keys' on your host machine. Otherwise DKIM keys will be changed every time this container starts.  
-You may need to change Selector from 'default' if you have other mail server.
+If you have a mail server besides this container, You will need to change Selector from 'default' so that it doesn't overlap with other one.
 
 ## Logging
 This container logs all failed and successful deliveries to 'docker logs'.
