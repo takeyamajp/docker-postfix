@@ -130,13 +130,12 @@ RUN { \
     echo '  sed -i "s/^#\(smtpd_milters .*\)/\1/" /etc/postfix/main.cf'; \
     echo '  sed -i "s/^\(Domain\t\).*/\1${DOMAIN_NAME}/" /etc/opendkim.conf'; \
     echo '  sed -i "s/^\(Selector\t\).*/\1${DKIM_SELECTOR}/" /etc/opendkim.conf'; \
-    echo '  sed -i "s/^\(KeyFile\t\).*/\1\/etc\/opendkim\/keys\/${DKIM_SELECTOR}\.private/" /etc/opendkim.conf'; \
+    echo '  sed -i "s/^\(KeyFile\t\).*/\1\/keys\/${DKIM_SELECTOR}\.private/" /etc/opendkim.conf'; \
     echo '  if [ ! -e /keys/${DKIM_SELECTOR}.private ] || [ ! -e /keys/${DKIM_SELECTOR}.txt ]; then'; \
     echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -d ${DOMAIN_NAME} -s ${DKIM_SELECTOR} -D /keys'; \
     echo '  fi'; \
-    echo '  rm -f /etc/opendkim/keys/*.private'; \
-    echo '  cp /keys/${DKIM_SELECTOR}.private /etc/opendkim/keys'; \
-    echo '  chown -R opendkim:opendkim /etc/opendkim/keys'; \
+    echo '  chown -R opendkim:opendkim /keys'; \
+    echo '  chmod o-rwx /keys/${DKIM_SELECTOR}.private'; \
     echo '  cat /keys/${DKIM_SELECTOR}.txt'; \
     echo 'fi'; \
     echo 'exec "$@"'; \
