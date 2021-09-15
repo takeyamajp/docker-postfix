@@ -49,7 +49,7 @@ RUN yum -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
 # opendkim
 RUN mkdir /keys; \
     yum -y install epel-release; \
-    yum -y install opendkim glibc-locale-source; \
+    yum -y install opendkim; \
     sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
     sed -i 's/^\(SoftwareHeader\t\).*/\1no/' /etc/opendkim.conf; \
     sed -i 's/^# *\(Domain\t.*\)/\1/' /etc/opendkim.conf; \
