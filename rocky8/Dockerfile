@@ -37,7 +37,7 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     { \
     echo 'pwcheck_method: auxprop'; \
     echo 'auxprop_plugin: sasldb'; \
-    echo 'mech_list: PLAIN LOGIN CRAM-MD5 DIGEST-MD5'; \
+    echo 'mech_list: PLAIN LOGIN CRAM-MD5'; \
     } > /etc/sasl2/smtpd.conf; \
     sed -i 's/^#\(submission .*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(smtps .*\)/\1/' /etc/postfix/master.cf; \
