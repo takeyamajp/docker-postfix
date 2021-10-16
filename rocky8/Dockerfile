@@ -1,19 +1,16 @@
 FROM rockylinux/rockylinux:8
 MAINTAINER "Hiroki Takeyama"
 
-# certificate
-RUN mkdir /cert; \
+# openssl
+RUN mkdir /ssl_certs; \
     dnf -y install openssl; \
-    openssl genrsa -aes256 -passout pass:dummy -out "/cert/key.pass.pem" 2048; \
-    openssl rsa -passin pass:dummy -in "/cert/key.pass.pem" -out "/cert/key.pem"; \
-    rm -f /cert/key.pass.pem; \
     dnf clean all;
 
 # postfix
 RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
-    sed -i 's/^\(smtpd_tls_cert_file =\) .*/\1 \/cert\/cert.pem/' /etc/postfix/main.cf; \
-    sed -i 's/^\(smtpd_tls_key_file =\) .*/\1 \/cert\/key.pem/' /etc/postfix/main.cf; \
+    sed -i 's/^\(smtpd_tls_cert_file =\) .*/\1 \/ssl_certs\/cert.pem/' /etc/postfix/main.cf; \
+    sed -i 's/^\(smtpd_tls_key_file =\) .*/\1 \/ssl_certs\/key.pem/' /etc/postfix/main.cf; \
     { \
     echo 'smtpd_sasl_path = smtpd'; \
     echo 'smtpd_sasl_auth_enable = yes'; \
@@ -29,6 +26,7 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     echo 'smtpd_tls_security_level = may'; \
     echo 'smtpd_tls_received_header = yes'; \
     echo 'smtpd_tls_loglevel = 1'; \
+    echo 'smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache'; \
     echo 'smtp_tls_security_level = may'; \
     echo 'smtp_tls_loglevel = 1'; \
     echo 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache'; \
@@ -43,13 +41,13 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^#\(smtps .*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.* syslog_name=.*\)/\1/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.* smtpd_sasl_auth_enable=.*\)/\1/' /etc/postfix/master.cf; \
-    sed -i 's/^#\(.* smtpd_recipient_restrictions=.*\)/\1/' /etc/postfix/master.cf; \
+    sed -i 's/^#\(.* smtpd_recipient_restrictions=\).*/\1permit_sasl_authenticated,reject/' /etc/postfix/master.cf; \
     sed -i 's/^#\(.* smtpd_tls_wrappermode=.*\)/\1/' /etc/postfix/master.cf; \
     newaliases; \
     dnf clean all;
 
 # opendkim
-RUN mkdir /keys; \
+RUN mkdir /dkim_keys; \
     dnf -y install epel-release; \
     dnf -y install opendkim glibc-locale-source; \
     sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
@@ -101,8 +99,13 @@ RUN { \
     echo 'ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime'; \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
-    echo 'openssl req -new -sha384 -key "/cert/key.pem" -subj "/CN=${HOST_NAME}" -out "/cert/csr.pem"'; \
-    echo 'openssl x509 -req -days 36500 -in "/cert/csr.pem" -signkey "/cert/key.pem" -out "/cert/cert.pem" &>/dev/null'; \
+    echo 'if [ ! -e /ssl_certs/cert.pem ] || [ ! -e /ssl_certs/key.pem ]; then'; \
+    echo '  openssl genrsa -aes256 -passout pass:dummy -out "/ssl_certs/key.pass.pem" 2048 &>/dev/null'; \
+    echo '  openssl rsa -passin pass:dummy -in "/ssl_certs/key.pass.pem" -out "/ssl_certs/key.pem" &>/dev/null'; \
+    echo '  rm -f /ssl_certs/key.pass.pem'; \
+    echo '  openssl req -new -sha384 -key "/ssl_certs/key.pem" -subj "/CN=${HOST_NAME}" -out "/ssl_certs/csr.pem"'; \
+    echo '  openssl x509 -req -days 36500 -in "/ssl_certs/csr.pem" -signkey "/ssl_certs/key.pem" -out "/ssl_certs/cert.pem" &>/dev/null'; \
+    echo 'fi'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
     echo '  rm -f /etc/sasldb2'; \
     echo 'fi'; \
@@ -130,13 +133,13 @@ RUN { \
     echo '  sed -i "s/^#\(smtpd_milters .*\)/\1/" /etc/postfix/main.cf'; \
     echo '  sed -i "s/^\(Domain\t\).*/\1${DOMAIN_NAME}/" /etc/opendkim.conf'; \
     echo '  sed -i "s/^\(Selector\t\).*/\1${DKIM_SELECTOR}/" /etc/opendkim.conf'; \
-    echo '  sed -i "s/^\(KeyFile\t\).*/\1\/keys\/${DKIM_SELECTOR}\.private/" /etc/opendkim.conf'; \
-    echo '  if [ ! -e /keys/${DKIM_SELECTOR}.private ] || [ ! -e /keys/${DKIM_SELECTOR}.txt ]; then'; \
-    echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -d ${DOMAIN_NAME} -s ${DKIM_SELECTOR} -D /keys'; \
+    echo '  sed -i "s/^\(KeyFile\t\).*/\1\/dkim_keys\/${DKIM_SELECTOR}\.private/" /etc/opendkim.conf'; \
+    echo '  if [ ! -e /dkim_keys/${DKIM_SELECTOR}.private ] || [ ! -e /dkim_keys/${DKIM_SELECTOR}.txt ]; then'; \
+    echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -d ${DOMAIN_NAME} -s ${DKIM_SELECTOR} -D /dkim_keys'; \
     echo '  fi'; \
-    echo '  chown -R opendkim:opendkim /keys'; \
-    echo '  chmod o-rwx /keys/${DKIM_SELECTOR}.private'; \
-    echo '  cat /keys/${DKIM_SELECTOR}.txt'; \
+    echo '  chown -R opendkim:opendkim /dkim_keys'; \
+    echo '  chmod o-rwx /dkim_keys/${DKIM_SELECTOR}.private'; \
+    echo '  cat /dkim_keys/${DKIM_SELECTOR}.txt'; \
     echo 'fi'; \
     echo 'exec "$@"'; \
     } > /usr/local/bin/entrypoint.sh; \
@@ -158,8 +161,10 @@ ENV ENABLE_DKIM true
 ENV DKIM_KEY_LENGTH 1024
 ENV DKIM_SELECTOR default
 
-# DKIM
-VOLUME /keys
+# SSL Certificates
+VOLUME /ssl_certs
+# DKIM Keys
+VOLUME /dkim_keys
 
 # SMTP
 EXPOSE 25
