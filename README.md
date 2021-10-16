@@ -32,8 +32,10 @@ Star this repository if it is useful for you.
     ENV DKIM_KEY_LENGTH 1024  
     ENV DKIM_SELECTOR default
     
-    # DKIM  
-    VOLUME /keys
+    # SSL Certificates  
+    VOLUME /ssl_certs
+    # DKIM Keys  
+    VOLUME /dkim_keys
     
     # SMTP  
     EXPOSE 25  
@@ -57,7 +59,8 @@ In advance you may need to add SPF, DKIM, DMARC records to your DNS server in or
           - "8587:587"  
           - "8465:465"  
         volumes:  
-          - /my/own/datadir:/keys  
+          - /my/own/certs:/ssl_certs  
+          - /my/own/keys:/dkim_keys  
         environment:  
           TIMEZONE: "Asia/Tokyo"  
           HOST_NAME: "smtp.example.com"  
@@ -89,9 +92,13 @@ You can usually use submission port 587.
 Use port 465 if your mail client needs SMTPS (SMTP over SSL), then ignore a displayed certificate warning.  
 Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 to false If you want to use it.
 
-## DKIM
-Public key will be displayed on 'docker logs'.  
-Mount volume '/keys' on your host machine. Otherwise DKIM keys will be changed every time this container starts.  
+## SSL certificates
+The self-signed certificate will be created automatically.  
+If you have a valid server certificate, mount the volume '/ssl_certs' and replace the existing certificate with yours.  
+
+## DKIM keys
+The public key will be displayed on 'docker logs'.  
+Mount the volume '/dkim_keys' on your host machine. Otherwise the key will be changed every time this container starts.  
 You can set DKIM_KEY_LENGTH to 2048 if your DNS server supports TXT records of more than 255 length.  
 If you have a mail server besides this container, you will need to change DKIM_SELECTOR from 'default' so that it doesn't overlap with other one.
 
