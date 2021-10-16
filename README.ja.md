@@ -32,8 +32,10 @@
     ENV DKIM_KEY_LENGTH 1024  
     ENV DKIM_SELECTOR default
     
-    # DKIM  
-    VOLUME /keys
+    # SSL Certificates  
+    VOLUME /ssl_certs
+    # DKIM Keys  
+    VOLUME /dkim_keys
     
     # SMTP  
     EXPOSE 25  
@@ -57,7 +59,8 @@
           - "8587:587"  
           - "8465:465"  
         volumes:  
-          - /my/own/datadir:/keys  
+          - /my/own/certs:/ssl_certs  
+          - /my/own/keys:/dkim_keys  
         environment:  
           TIMEZONE: "Asia/Tokyo"  
           HOST_NAME: "smtp.example.com"  
@@ -84,16 +87,20 @@ https://www.unicode.org/cldr/charts/latest/verify/zones/en.html
 認証時に使用するユーザー名は、メールアドレスのような形式になります。（例：user@example.com）  
 このユーザー名は送信するメールには含まれません。メールの送信元アドレスは目的に応じて自由にセットすることができます。
 
-## DKIM
-公開鍵は 'docker logs' に表示されます.  
-ボリューム '/keys' をホストマシンにマウントしてください。そうしないと、このコンテナが起動するたびにDKIMの鍵が変更されてしまいます。  
-もし DNS サーバーが255文字より長い TXT レコードをサポートしている場合は、DKIM_KEY_LENGTH の値を 2048 に変更する事ができます。  
-あなたがこのコンテナ以外にもメールサーバーを持っている場合、セレクタが重複しないように DKIM_SELECTOR を 'default' 以外に変更してください。
-
 ## ポート番号
 通常はサブミッションポート 587 を使用してください。  
 もし、SMTPS (SMTP over SSL) で接続したい場合はポート 465 を使用してください。接続時に表示される警告は無視してください。  
 ポート 25 はデフォルトで無効にしています。もし使用したい場合はオプション DISABLE_SMTP_AUTH_ON_PORT_25 を false に設定してください。
+
+## SSL証明書
+自己署名証明書が自動的に作成されます。  
+もし有効なサーバー証明書を持っているなら、ボリューム '/ssl_certs' をマウントして既にある証明書をあなたの証明書で置き換えてください。
+
+## DKIMキー
+公開鍵は 'docker logs' に表示されます.  
+ボリューム '/dkim_keys' をホストマシンにマウントしてください。そうしないと、このコンテナが起動するたびにDKIMの鍵が変更されてしまいます。  
+もし DNS サーバーが255文字より長い TXT レコードをサポートしている場合は、DKIM_KEY_LENGTH の値を 2048 に変更する事ができます。  
+あなたがこのコンテナ以外にもメールサーバーを持っている場合、セレクタが重複しないように DKIM_SELECTOR を 'default' 以外に変更してください。
 
 ## 動作ログ
 このコンテナは、全てのメール送信結果を 'docker logs' に出力します。
