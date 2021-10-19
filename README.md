@@ -93,8 +93,8 @@ Use port 465 if your mail client needs SMTPS (SMTP over SSL), then ignore a disp
 Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 to false If you want to use it.
 
 ## SSL certificates
-The self-signed certificate will be created automatically.  
-If you have a valid server certificate, mount the volume '/ssl_certs' and replace the existing certificate with yours.  
+The self-signed certificate will be created automatically into the volume '/ssl_certs', and it can be added to your OS (e.g. Windows, Linux, iOS, and Android) as the root certificate in order to avoid warnings on your mail clients.  
+If you have a valid server certificate, replace that with yours.  
 
 ## DKIM keys
 The public key will be displayed on 'docker logs'.  
