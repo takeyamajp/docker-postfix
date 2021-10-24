@@ -100,10 +100,8 @@ RUN { \
     echo 'rm -f /var/log/maillog'; \
     echo 'touch /var/log/maillog'; \
     echo 'if [ ! -e /ssl_certs/cert.pem ] || [ ! -e /ssl_certs/key.pem ]; then'; \
-    echo '  openssl genrsa -aes256 -passout pass:dummy -out "/ssl_certs/key.pass.pem" 2048 &>/dev/null'; \
-    echo '  openssl rsa -passin pass:dummy -in "/ssl_certs/key.pass.pem" -out "/ssl_certs/key.pem" &>/dev/null'; \
-    echo '  rm -f /ssl_certs/key.pass.pem'; \
-    echo '  openssl req -new -sha384 -key "/ssl_certs/key.pem" -subj "/CN=${HOST_NAME}" -out "/ssl_certs/csr.pem"'; \
+    echo '  openssl genrsa -out "/ssl_certs/key.pem" 2048 &>/dev/null'; \
+    echo '  openssl req -new -key "/ssl_certs/key.pem" -subj "/CN=${HOSTNAME}" -out "/ssl_certs/csr.pem"'; \
     echo '  openssl x509 -req -days 36500 -in "/ssl_certs/csr.pem" -signkey "/ssl_certs/key.pem" -out "/ssl_certs/cert.pem" &>/dev/null'; \
     echo 'fi'; \
     echo 'if [ -e /etc/sasldb2 ]; then'; \
@@ -118,7 +116,7 @@ RUN { \
     echo 'sed -i '\''/^# BEGIN SMTP SETTINGS$/,/^# END SMTP SETTINGS$/d'\'' /etc/postfix/main.cf'; \
     echo '{'; \
     echo 'echo "# BEGIN SMTP SETTINGS"'; \
-    echo 'echo "myhostname = ${HOST_NAME}"'; \
+    echo 'echo "myhostname = ${HOSTNAME}"'; \
     echo 'echo "mydomain = ${DOMAIN_NAME}"'; \
     echo 'echo "smtpd_banner = \$myhostname ESMTP"'; \
     echo 'echo "message_size_limit = ${MESSAGE_SIZE_LIMIT}"'; \
@@ -147,7 +145,7 @@ RUN { \
 
 ENV TIMEZONE Asia/Tokyo
 
-ENV HOST_NAME smtp.example.com
+ENV HOSTNAME smtp.example.com
 ENV DOMAIN_NAME example.com
 
 ENV MESSAGE_SIZE_LIMIT 10240000
