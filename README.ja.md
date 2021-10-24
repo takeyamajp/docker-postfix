@@ -18,7 +18,7 @@
     
     ENV TIMEZONE Asia/Tokyo
     
-    ENV HOST_NAME smtp.example.com  
+    ENV HOSTNAME smtp.example.com  
     ENV DOMAIN_NAME example.com
     
     ENV MESSAGE_SIZE_LIMIT 10240000
@@ -63,7 +63,7 @@
           - /my/own/keys:/dkim_keys  
         environment:  
           TIMEZONE: "Asia/Tokyo"  
-          HOST_NAME: "smtp.example.com"  
+          HOSTNAME: "smtp.example.com"  
           DOMAIN_NAME: "example.com"  
           MESSAGE_SIZE_LIMIT: "10240000"  
           AUTH_USER: "user"  
