@@ -9,7 +9,7 @@ Star this repository if it is useful for you.
 
 ## Supported tags and respective Dockerfile links  
 - [`latest`, `rocky8`](https://github.com/takeyamajp/docker-postfix/blob/master/rocky8/Dockerfile) (Rocky Linux)
-- [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (We'll finish support of CentOS8 in 31 December 2021.)
+- [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (CentOS 8 have finished support.)
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
 ## Image summary
