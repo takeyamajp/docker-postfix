@@ -59,6 +59,8 @@ RUN mkdir /dkim_keys; \
 # rsyslog
 RUN dnf -y install rsyslog; \
     sed -i 's/\(SysSock\.Use\)="off"/\1="on"/' /etc/rsyslog.conf; \
+    sed -i 's/\(^module.*load.*imjournal.*\)/#\1/' /etc/rsyslog.conf; \
+    sed -i 's/\(.*StateFile.*imjournal.*\)/#\1/' /etc/rsyslog.conf; \
     dnf clean all;
 
 # supervisor
