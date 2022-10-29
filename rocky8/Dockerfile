@@ -49,7 +49,7 @@ RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
 # opendkim
 RUN mkdir /dkim_keys; \
     dnf -y install epel-release; \
-    dnf -y install opendkim glibc-locale-source; \
+    dnf -y install opendkim opendkim-tools glibc-locale-source; \
     sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
     sed -i 's/^\(SoftwareHeader\t\).*/\1no/' /etc/opendkim.conf; \
     sed -i 's/^# *\(Domain\t.*\)/\1/' /etc/opendkim.conf; \
