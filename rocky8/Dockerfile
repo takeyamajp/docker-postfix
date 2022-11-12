@@ -68,8 +68,8 @@ RUN mkdir /run/supervisor; \
     dnf -y install supervisor; \
     sed -i 's/^\(nodaemon\)=false/\1=true/' /etc/supervisord.conf; \
     sed -i 's/^;\(user\)=chrism/\1=root/' /etc/supervisord.conf; \
-    sed -i '/^\[unix_http_server\]$/a username=dummy\npassword=dummy' /etc/supervisord.conf; \
-    sed -i '/^\[supervisorctl\]$/a username=dummy\npassword=dummy' /etc/supervisord.conf; \
+    sed -i 's/^\(\[unix_http_server\]\)/;\1/' /etc/supervisord.conf; \
+    sed -i 's/^\(file=\/run\/supervisor\/.*\)/;\1/' /etc/supervisord.conf; \
     { \
     echo '[program:postfix]'; \
     echo 'command=/usr/sbin/postfix -c /etc/postfix start'; \
