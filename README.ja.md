@@ -9,7 +9,7 @@
 
 ## サポートしているタグと Dockerfile へのリンク  
 - [`latest`, `rocky8`](https://github.com/takeyamajp/docker-postfix/blob/master/rocky8/Dockerfile) （Rocky Linux）
-- [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (CentOS 8 のサポートは 2021/12/31 に終了する予定です。）
+- [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (CentOS 8 のサポートは 2021/12/31 に終了しました。）
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
 ## 概要
