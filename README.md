@@ -94,7 +94,11 @@ Port 25 is disabled by default. Set DISABLE_SMTP_AUTH_ON_PORT_25 to false If you
 
 ## SSL certificates
 The self-signed certificate will be created automatically into the volume '/ssl_certs', and it can be added to your OS (e.g. Windows, Linux, iOS, and Android) as the root certificate in order to avoid warnings on your mail clients.  
-If you have a valid server certificate, replace that with yours.  
+
+If you have valid server certificates, you can use them.  
+And if you also have the intermediate certificate, append after the server certificate.  
+
+    cat server_cert.pem intermediate_CA.pem > cert.pem
 
 ## DKIM keys
 The public key will be displayed on 'docker logs'.  
