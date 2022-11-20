@@ -95,7 +95,11 @@ https://www.unicode.org/cldr/charts/latest/verify/zones/en.html
 ## SSL証明書
 自己署名証明書がボリューム '/ssl_certs' の中に自動的に作成されます。  
 そして、それはメールクライアントで発生する警告を防ぐために、あなたの OS (例えば Windows, Linux, iOS, Android など) にルート証明書として追加することができます。  
-もし有効なサーバー証明書を持っているなら、あなたの証明書でそれを置き換えてください。
+
+もし有効なサーバー証明書を持っている場合は、それらを使用する事ができます。  
+中間証明書がある場合は、以下のようにサーバー証明書の後に追加してください。  
+
+    cat server_cert.pem intermediate_CA.pem > cert.pem
 
 ## DKIMキー
 公開鍵は 'docker logs' に表示されます.  
