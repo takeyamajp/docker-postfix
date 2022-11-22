@@ -13,7 +13,7 @@
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
 ## 概要
-    FROM rockylinux/rockylinux:8  
+    FROM rockylinux:8  
     MAINTAINER "Hiroki Takeyama"
     
     ENV TIMEZONE Asia/Tokyo
