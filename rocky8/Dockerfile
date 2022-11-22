@@ -1,4 +1,4 @@
-FROM rockylinux/rockylinux:8
+FROM rockylinux:8
 MAINTAINER "Hiroki Takeyama"
 
 # openssl
