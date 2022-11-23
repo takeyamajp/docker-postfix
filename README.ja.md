@@ -8,7 +8,7 @@
 `Japanese (日本語)`
 
 ## サポートしているタグと Dockerfile へのリンク  
-- [`latest`, `rocky8`](https://github.com/takeyamajp/docker-postfix/blob/master/rocky8/Dockerfile) (Rocky Linux) [`alma8`](https://github.com/takeyamajp/docker-postfix/blob/master/alma8/Dockerfile) (AlmaLinux)  
+- [`latest`, `rocky8`](https://github.com/takeyamajp/docker-postfix/blob/master/rocky8/Dockerfile) (Rocky Linux) [`alma8`](https://github.com/takeyamajp/docker-postfix/blob/master/alma8/Dockerfile) (AlmaLinux)
 - [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (CentOS 8 のサポートは 2021/12/31 に終了しました。）
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
