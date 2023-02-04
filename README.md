@@ -12,6 +12,9 @@ Star this repository if it is useful for you.
 - [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (We have finished support for CentOS 8.)
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
+ ### Supported architectures: ([`more info`](https://github.com/docker-library/official-images#architectures-other-than-amd64))  
+ `amd64`, `arm64v8(for Raspberry Pi)`
+
 ## Image summary
     FROM rockylinux:8  
     MAINTAINER "Hiroki Takeyama"
