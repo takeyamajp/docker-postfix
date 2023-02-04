@@ -12,7 +12,7 @@
 - [`centos8`](https://github.com/takeyamajp/docker-postfix/blob/master/centos8/Dockerfile) (CentOS 8 のサポートは 2021/12/31 に終了しました。）
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
- ### サポートしているアーキテクチャー: ([`more info`](https://github.com/docker-library/official-images#architectures-other-than-amd64))  
+ ### サポートしているアーキテクチャー: ([`追加情報`](https://github.com/docker-library/official-images#architectures-other-than-amd64))  
  `amd64`, `arm64v8(Raspberry Pi)`
 
 ## 概要
