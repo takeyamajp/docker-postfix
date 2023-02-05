@@ -13,7 +13,7 @@ Star this repository if it is useful for you.
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
  ### Supported architectures: ([`more info`](https://github.com/docker-library/official-images#architectures-other-than-amd64))  
- `amd64`, `arm64v8(for Raspberry Pi)`
+ `amd64`, `arm64(for Raspberry Pi)`
 
 ## Image summary
     FROM rockylinux:8  
