@@ -13,7 +13,7 @@
 - [`centos7`](https://github.com/takeyamajp/docker-postfix/blob/master/centos7/Dockerfile)
 
  ### サポートしているアーキテクチャー: ([`追加情報`](https://github.com/docker-library/official-images#architectures-other-than-amd64))  
- `amd64`, `arm64(Raspberry Pi)`
+ `amd64`, `arm64(for Raspberry Pi)`
 
 ## 概要
     FROM rockylinux:8  
