@@ -9,6 +9,7 @@ RUN mkdir /ssl_certs; \
 # postfix
 RUN dnf -y install postfix cyrus-sasl-plain cyrus-sasl-md5; \
     sed -i 's/^\(inet_interfaces =\) .*/\1 all/' /etc/postfix/main.cf; \
+    sed -i 's/^\(inet_protocols =\) .*/\1 ipv4/' /etc/postfix/main.cf; \
     sed -i 's/^\(smtpd_tls_cert_file =\) .*/\1 \/ssl_certs\/cert.pem/' /etc/postfix/main.cf; \
     sed -i 's/^\(smtpd_tls_key_file =\) .*/\1 \/ssl_certs\/key.pem/' /etc/postfix/main.cf; \
     { \
@@ -51,9 +52,10 @@ RUN mkdir /dkim_keys; \
     dnf -y install epel-release; \
     dnf -y install opendkim opendkim-tools glibc-locale-source; \
     sed -i 's/^\(Mode\t\).*/\1s/' /etc/opendkim.conf; \
+    sed -i 's/^\(UserID\t\).*/\1opendkim:mail/' /etc/opendkim.conf; \
     sed -i 's/^\(SoftwareHeader\t\).*/\1no/' /etc/opendkim.conf; \
     sed -i 's/^# *\(Domain\t.*\)/\1/' /etc/opendkim.conf; \
-    echo 'smtpd_milters = inet:localhost:8891' >> /etc/postfix/main.cf; \
+    echo 'smtpd_milters = local:/run/opendkim/opendkim.sock' >> /etc/postfix/main.cf; \
     dnf clean all;
 
 # rsyslog
@@ -136,6 +138,7 @@ RUN { \
     echo '  if [ ! -e /dkim_keys/${DKIM_SELECTOR}.private ] || [ ! -e /dkim_keys/${DKIM_SELECTOR}.txt ]; then'; \
     echo '    opendkim-genkey -b ${DKIM_KEY_LENGTH} -d ${DOMAIN_NAME} -s ${DKIM_SELECTOR} -D /dkim_keys'; \
     echo '  fi'; \
+    echo '  chown -R opendkim:mail /run/opendkim'; \
     echo '  chown -R opendkim:opendkim /dkim_keys'; \
     echo '  chmod o-rwx /dkim_keys/${DKIM_SELECTOR}.private'; \
     echo '  cat /dkim_keys/${DKIM_SELECTOR}.txt'; \
